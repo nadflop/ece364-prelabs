@@ -22,6 +22,10 @@ def find(pattern: str) -> str:
     result = [ ] #the list of patterns in the sequence
     patSize = len(pattern) #size of the pattern
     seqSize = len(sequence) #size of the sequence
+    #check if the size of pattern is bigger than sequence
+    if patSize > seqSize:
+        return
+    #if not, proceed to find the pattern
     for x in range(seqSize - patSize + 1):
         temp = [ ]
         for y in range(patSize):
@@ -40,9 +44,40 @@ def find(pattern: str) -> str:
     return result
 
 #---------------problem 2----------------------------
-def getStreakProduct(sequence: str, maxSize, product):
-    pass
+def getStreakProduct(sequence: str, maxSize: int, product: int) -> str:
+    seqSize = len(sequence)
+    minSize = 2 #the size of the sub-sequences (min: 2, max: maxSize)
+    p = 1
+    temp = [ ]
+    result = [ ]
 
+    if seqSize < minSize:  # check if it meets the requirement
+        return result
+
+    for x in range(seqSize):
+        temp = [ ]
+        p = 1
+        for y in range(maxSize):
+            p = p * int(sequence[x])
+            mod = product % p
+            if mod == 0:
+                temp.append(sequence[x])
+                if x in range(seqSize - 1):
+                    x = x + 1
+            else:
+                if x in range(seqSize - 1):
+                    x = x + 1
+                    break
+            if y == maxSize and p == product:
+                result.append(''.join(temp))
+                break
+            elif len(temp) >= minSize and p == product:
+                result.append(''.join(temp))
+                break
+
+    return result
+
+#-------------------problem 3--------------------------------
 def writePyramids(filePath, baseSize, count, char):
     pass
 
@@ -67,5 +102,5 @@ def functionName2(c:str, d:str) ->int:
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-    result = find('9XX3')
+    result = getStreakProduct('54789654321687984', 5, 288)
     print(result)
