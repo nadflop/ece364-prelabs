@@ -79,18 +79,33 @@ def getStreakProduct(sequence: str, maxSize: int, product: int) -> str:
 
 #-------------------problem 3--------------------------------
 def writePyramids(filePath: str, baseSize: int, count: int, char: str):
-    #generate line n for a single pyramid
-    #generate a single pyramid, then use it to generate the rest
-    #combine the pyramids in a list
-    #write the list to the target file
-    if baseSize % 2 == 0: #if its even number, return
-        return
-    line = [ ]
 
-    for i in range(0, baseSize):
+    f = open(filePath, "w+")
+    i = 0
+    space = int((baseSize - 1) / 2)
 
-        for j in range(0, i):
+    while i < baseSize:
+        for j in range(count):
+            #print the spaces first
+            for k in range(0, space):
+                f.write(" ")
 
+            for m in range(0, i+1):
+                f.write(char)
+
+            for n in range(0, space):
+                f.write(" ")
+
+            if j + 1 != count:
+                f.write(" ")
+
+            print(i)
+
+        f.write("\n")
+        space = space - 1
+        i = i + 2
+
+    f.close()
 
 #--------------------problem 4-----------------------------
 def getStreaks(sequence: str, letters: str) -> list:
@@ -196,9 +211,8 @@ def convertToInteger(boolList: list) -> int:
 
     result = int(''.join(binary), 2)
     return result
+
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-    sequence = "AAASSSSSSAPPPSSPPBBCCCSSS"
-    r = getStreaks(sequence, "PAZ")
-    print(r)
+   ...
