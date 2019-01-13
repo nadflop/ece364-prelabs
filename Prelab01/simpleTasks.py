@@ -89,10 +89,10 @@ def writePyramids(filePath: str, baseSize: int, count: int, char: str):
 
     for i in range(0, baseSize):
 
-        for j in range(0, i+1):
-            pass
+        for j in range(0, i):
 
 
+#--------------------problem 4-----------------------------
 def getStreaks(sequence: str, letters: str) -> list:
     seqSize = len(sequence)
     letSize = len(letters)
@@ -124,9 +124,7 @@ def getStreaks(sequence: str, letters: str) -> list:
             i = i + 1
 
     return result
-
-
-
+#---------------------------problem 5------------------------
 def findNames(nameList: str, part: str, name: str) -> str:
     result = [ ]
     if part == 'L':
@@ -148,7 +146,7 @@ def findNames(nameList: str, part: str, name: str) -> str:
                 result.append(nameList[i])
 
     return result
-
+#-------------------------problem 6---------------------
 def convertToBoolean(num: int, size: int) -> str:
     binary = [ ]
     booleanList = [ ]
@@ -176,7 +174,7 @@ def convertToBoolean(num: int, size: int) -> str:
             booleanList.reverse()
 
     return(booleanList)
-
+#---------------------------problem 7----------------------------
 def convertToInteger(boolList: list) -> int:
     if len(boolList) == 0:
         return
