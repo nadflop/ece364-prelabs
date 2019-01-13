@@ -100,29 +100,29 @@ def getStreaks(sequence: str, letters: str) -> list:
     result = [ ]
     ptr = 0
     j = 0
+    i = 0
 
-    for i in range (0, seqSize):
+    while i < seqSize:
         temp = [ ]
+        j = 0
         while j < letSize:
             if sequence[i] == letters[j]:
-                for k in range(seqSize):
+                for k in range(i, seqSize):
                     if sequence[k] == sequence[i]:
                         temp.append(sequence[k])
                         ptr = ptr + 1
                     else:
                         break
                 result.append(''.join(temp))
-                i = ptr
-
+                j = letSize
             else:
                 j = j + 1
-        print(result)
-        print(len(result))
+        if ptr != 0:
+            i = i + ptr
+            ptr = 0
+        else:
+            i = i + 1
 
-
-
-
-    print(sequence[0])
     return result
 
 
@@ -202,4 +202,5 @@ def convertToInteger(boolList: list) -> int:
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
     sequence = "AAASSSSSSAPPPSSPPBBCCCSSS"
-    getStreaks(sequence, "SAQT")
+    r = getStreaks(sequence, "PAZ")
+    print(r)
