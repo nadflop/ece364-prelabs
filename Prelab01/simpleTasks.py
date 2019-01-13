@@ -78,29 +78,128 @@ def getStreakProduct(sequence: str, maxSize: int, product: int) -> str:
     return result
 
 #-------------------problem 3--------------------------------
-def writePyramids(filePath, baseSize, count, char):
-    pass
+def writePyramids(filePath: str, baseSize: int, count: int, char: str):
+    #generate line n for a single pyramid
+    #generate a single pyramid, then use it to generate the rest
+    #combine the pyramids in a list
+    #write the list to the target file
+    if baseSize % 2 == 0: #if its even number, return
+        return
+    line = [ ]
 
-def getStreaks(sequence, letters):
-    pass
+    for i in range(0, baseSize):
 
-def findNames(nameList, part, name):
-    pass
-
-def convertToBoolean(num, size):
-    pass
-
-def convertToInteger(boolList):
-    pass
-
+        for j in range(0, i+1):
+            pass
 
 
-def functionName1(a:float, b:float) ->float:
-    pass
-def functionName2(c:str, d:str) ->int:
-    pass
+def getStreaks(sequence: str, letters: str) -> list:
+    seqSize = len(sequence)
+    letSize = len(letters)
+    temp = [ ]
+    result = [ ]
+    ptr = 0
+    j = 0
+
+    for i in range (0, seqSize):
+        temp = [ ]
+        while j < letSize:
+            if sequence[i] == letters[j]:
+                for k in range(seqSize):
+                    if sequence[k] == sequence[i]:
+                        temp.append(sequence[k])
+                        ptr = ptr + 1
+                    else:
+                        break
+                result.append(''.join(temp))
+                i = ptr
+
+            else:
+                j = j + 1
+        print(result)
+        print(len(result))
+
+
+
+
+    print(sequence[0])
+    return result
+
+
+
+def findNames(nameList: str, part: str, name: str) -> str:
+    result = [ ]
+    if part == 'L':
+        for i in range(len(nameList)):
+            newList = nameList[i].split()
+            if str(newList[1]).lower() == name.lower():
+                result.append(nameList[i])
+    elif part == 'F':
+        for i in range(len(nameList)):
+            newList = nameList[i].split()
+            if str(newList[0]).lower() == name.lower():
+                result.append(nameList[i])
+    elif part == 'FL':
+        for i in range(len(nameList)):
+            newList = nameList[i].split()
+            if str(newList[0]).lower() == name.lower():
+                result.append(nameList[i])
+            elif str(newList[1]).lower() == name.lower():
+                result.append(nameList[i])
+
+    return result
+
+def convertToBoolean(num: int, size: int) -> str:
+    binary = [ ]
+    booleanList = [ ]
+
+    if type(num) != int:
+        return binary
+
+    binary = bin(num).replace("0b", "")
+    print(binary)
+    diff = size - len(binary)
+    print(diff)
+
+    for i in range(0, len(binary)):
+        if binary[i] == '1':
+            booleanList.append('True')
+        elif binary[i] == '0':
+            booleanList.append('False')
+        else:
+            break
+
+    if diff > 0:
+        for j in range(diff):
+            booleanList.reverse()
+            booleanList.append('False')
+            booleanList.reverse()
+
+    return(booleanList)
+
+def convertToInteger(boolList: list) -> int:
+    if len(boolList) == 0:
+        return
+
+    if type(boolList) != list:
+        return
+
+    for item in boolList:
+        if type(item) != bool:
+            return
+
+    binary = [ ]
+
+    for i in range(len(boolList)):
+        if boolList[i] == False:
+            binary.append('0')
+        elif boolList[i] == True:
+            binary.append('1')
+
+    result = int(''.join(binary), 2)
+    return result
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-    result = getStreakProduct('54789654321687984', 5, 288)
-    print(result)
+    sequence = "AAASSSSSSAPPPSSPPBBCCCSSS"
+    getStreaks(sequence, "SAQT")
