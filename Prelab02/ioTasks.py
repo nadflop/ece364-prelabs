@@ -73,23 +73,39 @@ def getVolumeSum(symbol: str, date1: str, date2: str) -> int:
 
     return total
 
-def getBestGain(date):
-    pass
+def getBestGain(date: str):
+    filename = ['AAPL.dat', 'AMZN.dat', 'FB.dat', 'MSFT.dat', 'TSLA.dat']
+    maxGain = 0
+
+    for item in filename:
+        DataText = os.path.join(DataPath, item)
+        with open(DataText) as f:
+            rawData = f.readlines()  # read and return line in files seperately
+        for i in range(2, len(rawData)):
+            newData = str(rawData[i]).split(',')
+            if date in newData[0]:
+                closeVal = float(newData[1])
+                openVal = float(newData[3])
+                gain = (closeVal - openVal) / openVal * 100
+                if gain > maxGain:
+                    maxGain = round(gain, 4)
+
+    return maxGain
 
 def getAveragePrice(symbol: str, year):
     filename = symbol.__add__('.dat')
     DataText = os.path.join(DataPath, filename)
     with open(DataText) as f:
-        raw = f.readline()  # read and return line in files seperately
+        raw = f.readlines()  # read and return line in files seperately
 
 def getCountOver(symbol: str, price):
     filename = symbol.__add__('.dat')
     DataText = os.path.join(DataPath, filename)
     with open(DataText) as f:
-        raw = f.readline()  # read and return line in files seperately
+        raw = f.readlines()  # read and return line in files seperately
 
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-   p = getVolumeSum('AAPL', '2018/12/31', '2018/12/16')
-   print(p)
+   p = getBestGain('2019/01/11')
+   #print(p)
