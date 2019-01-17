@@ -36,16 +36,42 @@ def getGainPercent(symbol: str):
     filename = symbol.__add__('.dat')
     DataText = os.path.join(DataPath, filename)
     with open(DataText) as f:
-        raw = f.readline()  # read and return line in files seperately
+        rawData = f.readlines()  # read and return line in files seperately
 
-def getVolumeSum(symbol: str, date1, date2):
+    maxDiff = 0
+    day = 0
+
+    for i in range(2, len(rawData)):
+        newData = str(rawData[i]).split(',')
+        diff = float(newData[1]) - float(newData[3])
+        if round(diff, 4) > 0:
+            maxDiff = diff
+            day = day + 1
+
+    percent = round((day/(len(rawData) - 2)) * 100, 4)
+
+    return percent
+
+def getVolumeSum(symbol: str, date1: str, date2: str) -> int:
     if date1 >= date2:
         return None
 
     filename = symbol.__add__('.dat')
     DataText = os.path.join(DataPath, filename)
     with open(DataText) as f:
-        raw = f.readline()  # read and return line in files seperately
+        rawData = f.readlines()  # read and return line in files seperately
+
+    for i in range(2, len(rawData)):
+        newData = str(rawData[i]).split(',')
+        if date1 in newData[0]:
+            sum1 = newData[2]
+        if date2 in newData[0]:
+            sum2 = newData[2]
+
+    sumVolume = float(sum1) + float(sum2)
+    total = int(round(sumVolume))
+
+    return total
 
 def getBestGain(date):
     pass
@@ -65,4 +91,5 @@ def getCountOver(symbol: str, price):
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-   getMaxDifference('AAPL')
+   p = getVolumeSum('AAPL', '2018/12/31', '2018/12/16')
+   print(p)
