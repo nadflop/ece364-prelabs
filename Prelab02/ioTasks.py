@@ -142,5 +142,4 @@ def getCountOver(symbol: str, price: float):
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-   p = getBestGain('2019/01/11')
-   print(p)
+    ...
