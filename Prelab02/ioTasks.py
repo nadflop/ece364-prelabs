@@ -74,10 +74,14 @@ def getVolumeSum(symbol: str, date1: str, date2: str) -> int:
     return total
 #----------------------------------------------------problem 4----------------------------------------------------------
 def getBestGain(date: str):
-    filename = ['AAPL.dat', 'AMZN.dat', 'FB.dat', 'MSFT.dat', 'TSLA.dat']
+    flname = [ ]
+    for root, dirs, files in os.walk(DataPath):
+        for filename in files:
+            flname.append(filename)
+
     maxGain = 0
 
-    for item in filename:
+    for item in flname:
         DataText = os.path.join(DataPath, item)
         with open(DataText) as f:
             rawData = f.readlines()  # read and return line in files seperately
@@ -138,4 +142,5 @@ def getCountOver(symbol: str, price: float):
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-   p = getCountOver('AAPL', 100.00)
+   p = getBestGain('2019/01/11')
+   print(p)
