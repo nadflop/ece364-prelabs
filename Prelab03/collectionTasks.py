@@ -11,68 +11,186 @@ import sys     # Each  one on a line
 #######################################################
 DataPath = os.path.expanduser("~ee364/DataFolder/Prelab03")
 
-#-----------------------------------problem 1--------------------------------------------
-def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
-    DataFile = os.path.join(DataPath, 'maps')
-    DataText = os.path.join(DataFile, 'projects.dat') #open projects file
-    with open(DataText) as f:
-        rawData = f.readlines()
+#helper functions
 
-    compMap = {'R': "resistors.dat",
+def projToCircMap(): #mapping for ProjectID to CircuitID
+    DataFile = os.path.join(DataPath, 'maps')
+    DataText = os.path.join(DataFile, 'projects.dat')  # open projects file
+    with open(DataText) as f:
+        data = [line.split() for line in f.read().splitlines()]
+
+    projMap = { }
+    circuitID = [ ]
+    key = 'A'
+
+    for item in data[2:]:
+        item.reverse()
+        if key != item[0]:
+            circuitID = [ ]
+            key = item[0]
+            circuitID.append(item[1])
+            projMap[key] = circuitID
+        else:
+            circuitID.append(item[1])
+            projMap[key] = circuitID
+
+    return projMap
+
+def circToCompMap():#mapping for circuitID to componentID
+    DataFile = os.path.join(DataPath, 'circuits')
+    flname = [ ]
+    for root, dirs, files in os.walk(DataFile):
+        for filename in files:
+            flname.append(filename)
+
+    circMap = { }
+
+    for item in flname:
+        CircFile = os.path.join(DataFile, item)
+        with open(CircFile) as f:
+            data = [line.strip() for line in f.read().splitlines()]
+        t = item.replace('circuit_', '')
+        s = t.replace('.dat', '')
+        circMap[s] = data[data.index('Components:') + 2:]
+
+    return circMap
+
+def compToTypeMap():#mapping between type of component and their IDs
+    typeMap = {'R': "resistors.dat",
                'I': "inductors.dat",
                'C': "capacitors.dat",
                'T': "transistors.dat"}
-    circuit = [ ]
-    uniqueComp = [ ]
 
-    #find if the project ID exists in the projects.dat file
-    for item in rawData:
-        oldData = str(item).strip()
-        newData = str(oldData).split()
-        for item in newData:
-            if projectID == str(item):
-                circuit.append(newData[0])#take the circuit ID
-    #raise an error if it doesn't exists
+    compMap = { }
+    c = [ ]
+
+    DataFile = os.path.join(DataPath, 'maps')
+    for v in typeMap.values():
+        DataText = os.path.join(DataFile, v)  # open the associated component file
+        with open(DataText) as f:
+            data = [line.strip() for line in f.read().splitlines()]
+        for k in typeMap.keys():
+            c = [ ]
+            if typeMap[k] == v:
+                for item in data[3:]:
+                    item = item.split()
+                    c.append(item[0])
+                    compMap[k] = c
+
+    return compMap
+
+def compToCostMap():#mapping between cost of component and their IDs
+    typeMap = {'R': "resistors.dat",
+               'I': "inductors.dat",
+               'C': "capacitors.dat",
+               'T': "transistors.dat"}
+
+    costMap = { }
+    c = [ ]
+
+    DataFile = os.path.join(DataPath, 'maps')
+    for v in typeMap.values():
+        DataText = os.path.join(DataFile, v)  # open the associated component file
+        with open(DataText) as f:
+            data = [line.strip() for line in f.read().splitlines()]
+        for k in typeMap.keys():
+            c = [ ]
+            if typeMap[k] == v:
+                for item in data[3:]:
+                    item = item.split()
+                    costMap[item[0]] = item[1].replace('$', '')
+
+    return costMap
+
+
+
+
+
+
+#-----------------------------------problem 1--------------------------------------------
+def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
+    projMap = projToCircMap()
+    circuit = [ ]
+    result = [ ]
+    s1 = [ ]
+    projMap = projToCircMap()
+    for k in projMap.keys():    #find if the project ID exists
+        if projectID == str(k):
+            circuit = projMap[k] #get all list of circuits build in proj
+
     if len(circuit) == 0:
         raise ValueError("The projectID doesn't seems to exists")
-    #from the circuit ID, find the file in the circuits folder
+
+    typeMap = compToTypeMap() #mapping between componentID to its type
+    for k in typeMap.keys():
+        if componentSymbol == k:
+            s1 = typeMap[k]  # get all the components for that type
+
+    circMap = circToCompMap()#mapping between circuitID and the components
     for item in circuit:
-        IDFile = os.path.join(DataPath, 'circuits')
-        filename = 'circuit_' + str(item) + '.dat';
-        IDText = os.path.join(IDFile, filename)  # open projects file
-        with open(IDText) as f:
-            data = [line.rstrip('\n') for line in f.read().splitlines()]
+        for k in circMap.keys():
+            if item == k:
+                components = circMap[k] #get all the component used in the circuit
+                for i in components:
+                    for j in s1:
+                        if i == j:
+                            if i in result:  # make sure the item is distinct
+                                del result[result.index(i)]
+                            else:
+                                result.append(i)
 
-        compList = data[data.index('Components:')+2:]#get the components ID
+    return len(result)
+#-------------------------------------------------problem 2-------------------------------------------------------------
+def getComponentByStudent(studentName: str, componentSymbol: str) -> int:
+    from collections import namedtuple
+    student = namedtuple("Student", ["First", "Last", "ID"])
 
-        CompText = os.path.join(DataFile, compMap[componentSymbol.upper()])#check dictionary to know which folder to open
-        with open(CompText) as f:
-            compData = [line.strip() for line in f.read().splitlines()]
+    '''
+    flname = [ ]
+    for root, dirs, files in os.walk(DataFile):
+        for filename in files:
+            flname.append(filename)
 
-        for item1 in compList:
-            item1 = item1.strip()
-            for item2 in compData:
-                test = item2.split()
-                #print(item1)
-                if item1 in test[0].strip():
-                    if item1 in uniqueComp:#make sure the item is distinct
-                        del uniqueComp[uniqueComp.index(item1)]
-                    else:
-                        uniqueComp.append(item1)
-
-    return len(uniqueComp)
-
-def getComponentByStudent(studentName, componentSymbol):
-    pass
-
+    for item in flname:
+        DataText = os.path.join(DataFile, item)
+        with open(DataText) as f:
+            rawData = f.readlines()  # read and return line in files seperately
+    '''
+#-------------------------------------problem 3------------------------------------------------------------------------
 def getParticipationByStudent(studentName):
     pass
 
 def getParticipationByProject(projectID):
     pass
+#------------------------------------problem 5--------------------------------------------------------------------------
+def getCostOfProjects() -> dict:
+    projMap = projToCircMap()
+    circMap = circToCompMap()
+    compMap = compToCostMap()
+    print(circMap)
+    print(compMap)
+    circVal = { }
+    projVal = { }
+    cost = 0
 
-def getCostOfProjects():
-    pass
+    for key in circMap.keys():
+        cost = 0
+        for item in circMap[key]:
+            for k in compMap.keys():
+                if item == k:
+                    cost = cost + float(compMap[k])
+        circVal[key] = cost
+
+    for key in projMap.keys():
+        total = 0
+        for item in projMap[key]:
+            for k in circVal.keys():
+                if item == k:
+                    total = total + circVal[k]
+        projVal[key] = round(total, 2)
+
+    return projVal
+
 
 def getProjectByComponent(componentIDs):
     pass
@@ -94,6 +212,10 @@ def getCircuitByComponent(componentIDs):
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-    num = getComponentCountByProject('082D6241-40EE-432E-A635-65EA8AA374B6', 'c')
+    #projToCompMap()
+    compToCostMap()
+    num = getComponentCountByProject('082D6241-40EE-432E-A635-65EA8AA374B6', 'R')
     print(num)
-    
+    getComponentByStudent('Julia Butler', 'I')
+    r = getCostOfProjects()
+    print(r)
