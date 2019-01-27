@@ -102,9 +102,23 @@ def compToCostMap():#mapping between cost of component and their IDs
 
     return costMap
 
+def studentToIDMap():
+    #get the mapping between the student Name and its ID
+    DataFile = os.path.join(DataPath, 'maps')
+    DataText = os.path.join(DataFile, 'students.dat')
+    with open(DataText) as f:
+        data = [line.split() for line in f.read().splitlines()]
 
+    from collections import namedtuple
+    Student = namedtuple("Student", ["First", "Last"])
 
+    studMap = { }
 
+    for item in data[2:]:
+        studMap[Student(item[1], item[0].rstrip(','))] = item[-1]
+
+    print(studMap)
+    return studMap
 
 
 #-----------------------------------problem 1--------------------------------------------
@@ -142,10 +156,21 @@ def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
     return len(result)
 #-------------------------------------------------problem 2-------------------------------------------------------------
 def getComponentByStudent(studentName: str, componentSymbol: str) -> int:
+    studMap = studentToIDMap()
+
+    [F, L] = studentName.split()
+    reverseMap = { }
+
+
+    for k in studMap.keys():
+        if [k.First, k.Last] == [F, L]:
+            ID = studMap[k]
+            print(ID)
+    '''
     from collections import namedtuple
     student = namedtuple("Student", ["First", "Last", "ID"])
 
-    '''
+
     flname = [ ]
     for root, dirs, files in os.walk(DataFile):
         for filename in files:
@@ -192,19 +217,35 @@ def getCostOfProjects() -> dict:
     return projVal
 
 
-def getProjectByComponent(componentIDs):
+def getProjectByComponent(componentIDs: set) -> set:
     pass
 
 def getCommonByProject(projectID1, projectID2):
+    projMap = projToCircMap()
+    for k in projMap.keys():  # find if the project ID exists
+        if projectID1 == str(k):
+            circuit1 = set(projMap[k])  # get all list of circuits build in proj
+        if projectID2 == str(k):
+            circuit2 = set(projMap[k])  # get all list of circuits build in proj
+
+    if len(circuit1) == 0:
+        raise ValueError("The projectID1 doesn't seems to exists")
+    if len(circuit2) == 0:
+        raise ValueError("The projectID2 doesn't seems to exists")
+
+    circuit3 = circuit1 & circuit2
+
+
+    return (list(circuit3))
+
+
+def getComponentReport(componentIDs: set)-> dict:
     pass
 
-def getComponentReport(componentIDs):
+def getCircuitByStudent(studentNames: set) -> set:
     pass
 
-def getCircuitByStudent(studentNames):
-    pass
-
-def getCircuitByComponent(componentIDs):
+def getCircuitByComponent(componentIDs: set)-> set:
     pass
 
 
@@ -212,10 +253,12 @@ def getCircuitByComponent(componentIDs):
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-    #projToCompMap()
-    compToCostMap()
-    num = getComponentCountByProject('082D6241-40EE-432E-A635-65EA8AA374B6', 'R')
-    print(num)
-    getComponentByStudent('Julia Butler', 'I')
-    r = getCostOfProjects()
-    print(r)
+    #compToCostMap()
+    #num = getComponentCountByProject('082D6241-40EE-432E-A635-65EA8AA374B6', 'R')
+    #print(num)
+    #getComponentByStudent('Julia Butler', 'I')
+    #r = getCostOfProjects()
+    #print(r)
+    #p = getCommonByProject('90BE0D09-1438-414A-A38B-8309A49C02EF', '66FA081D-D1AA-4306-8650-9C39429CCDAB')
+    #print(p)
+    getComponentByStudent('Keith Adams', 'R')
