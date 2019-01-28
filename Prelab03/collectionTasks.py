@@ -203,13 +203,22 @@ def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
 #-------------------------------------------------problem 2-------------------------------------------------------------
 def getComponentByStudent(studentName: str, componentSymbol: str) -> int:
     studMap = studentToIDMap()
-    [F, L] = studentName.split()
+    if ',' in studentName:
+        name = studentName.split()
+        L = name[0].rstrip(',')
+        F = name[1]
+    else:
+        [F, L] = studentName.split()
+
     ID = ''
     s1 = set()
 
     for k in studMap.keys():
         if [k.First, k.Last] == [F, L]:
             ID = studMap[k]
+        if k.First == F:
+            if k.Last == L:
+                ID = studMap[k]
 
     if len(ID) == 0:
         raise ValueError("The student name passed doesn't exist")
@@ -276,7 +285,6 @@ def getParticipationByStudent(studentName: str) -> set:
 def getParticipationByProject(projectID):
     projMap = projToStudID() #mapping between projID and studentID
     studID = IDToStud() #mapping between student ID and name
-    print(studID)
     result = set()
 
     for k in projMap.keys():  # find if the project ID exists
@@ -415,4 +423,5 @@ def getCircuitByComponent(componentIDs: set)-> set:
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-    ...
+    p = getComponentByStudent('Russell, Scott', 'T')
+    print(p)
