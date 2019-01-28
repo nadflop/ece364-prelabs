@@ -357,21 +357,26 @@ def getProjectByComponent(componentIDs: set) -> set:
 #-------------------------------------problem 7-------------------------------------------------------------------------
 def getCommonByProject(projectID1, projectID2):
     projMap = projToCircMap()
-    circuit1 = set()
-    circuit2 = set()
+    circuit1 = [ ]
+    circuit2 = [ ]
 
     for k in projMap.keys():  # find if the project ID exists
         if projectID1 == str(k):
-            circuit1 = set(projMap[k])  # get all list of circuits build in proj
+            circuit1 = projMap[k]  # get all list of circuits build in proj
         if projectID2 == str(k):
-            circuit2 = set(projMap[k])  # get all list of circuits build in proj
+            circuit2 = projMap[k]  # get all list of circuits build in proj
 
     if len(circuit1) == 0:
         raise ValueError("The projectID1 doesn't seems to exists")
     if len(circuit2) == 0:
         raise ValueError("The projectID2 doesn't seems to exists")
 
-    circuit3 = circuit1 & circuit2
+    circuit3 = [ ]
+
+    for element in circuit1:
+        for item in circuit2:
+            if element == item:
+                circuit3.append(element)
 
     return list(circuit3)
 #------------------------------------problem 8--------------------------------------------------------------------------
@@ -439,5 +444,5 @@ def getCircuitByComponent(componentIDs: set)-> set:
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
-    p = getComponentByStudent('Russell, Scott', 'T')
+    p = getCommonByProject('3BB1CF3F-79B7-4AFC-95D8-FDEA4FAE9287', '6CCCA5F3-3008-46FF-A779-2D2F872DAF82')
     print(p)
