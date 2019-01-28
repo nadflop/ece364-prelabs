@@ -70,7 +70,7 @@ def circToStudent():
             data = [line.strip() for line in f.read().splitlines()]
         t = item.replace('circuit_', '')
         s = t.replace('.dat', '')
-        circStudMap[s] = data[2:data.index('Components:') - 1]
+        circStudMap[s] = data[2:data.index('Components:')]
 
     return circStudMap
 #-------------------------------------------mapping between circuit ID and student--------------------------------------
@@ -93,7 +93,7 @@ def compToTypeMap():
                 for item in data[3:]:
                     item = item.split()
                     component.append(item[0])
-                    compMap[k] = component
+                compMap[k] = component
 
     return compMap
 #----------------------------mapping between cost of component and their IDs--------------------------------------------
@@ -164,7 +164,7 @@ def projToStudID():
                 if item == k: #if its the same circuit ID
                     s2 = set(circMap[k])
                     s1= s1 | s2
-        projStudMap[keys] = s1
+                projStudMap[keys] = s1
 
     return projStudMap
 #-----------------------------------problem 1---------------------------------------------------------------------------
@@ -173,7 +173,7 @@ def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
     circuit = [ ]
     result = [ ]
     s1 = [ ]
-    projMap = projToCircMap()
+
     for k in projMap.keys():    #find if the project ID exists
         if projectID == str(k):
             circuit = projMap[k] #get all list of circuits build in proj
@@ -189,7 +189,7 @@ def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
     circMap = circToCompMap()#mapping between circuitID and the components
     for item in circuit:
         for k in circMap.keys():
-            if item == k:
+            if item == k: #found the circuit
                 components = circMap[k] #get all the component used in the circuit
                 for i in components:
                     for j in s1:
@@ -357,27 +357,27 @@ def getProjectByComponent(componentIDs: set) -> set:
 #-------------------------------------problem 7-------------------------------------------------------------------------
 def getCommonByProject(projectID1, projectID2):
     projMap = projToCircMap()
-    circuit1 = [ ]
-    circuit2 = [ ]
+    circuit1 = set()
+    circuit2 = set()
 
     for k in projMap.keys():  # find if the project ID exists
         if projectID1 == str(k):
-            circuit1 = projMap[k]  # get all list of circuits build in proj
+            circuit1 = set(projMap[k])  # get all list of circuits build in proj
         if projectID2 == str(k):
-            circuit2 = projMap[k]  # get all list of circuits build in proj
+            circuit2 = set(projMap[k])  # get all list of circuits build in proj
 
     if len(circuit1) == 0:
         raise ValueError("The projectID1 doesn't seems to exists")
     if len(circuit2) == 0:
         raise ValueError("The projectID2 doesn't seems to exists")
 
-    circuit3 = [ ]
+    #circuit3 = [ ]
 
-    for element in circuit1:
-        for item in circuit2:
-            if element == item:
-                circuit3.append(element)
-
+    #for element in circuit1:
+    #    for item in circuit2:
+    #        if element == item:
+    #           circuit3.append(element)
+    circuit3 = circuit1 & circuit2
     return list(circuit3)
 #------------------------------------problem 8--------------------------------------------------------------------------
 def getComponentReport(componentIDs: set)-> dict:
@@ -396,7 +396,6 @@ def getComponentReport(componentIDs: set)-> dict:
                     comp = circMap[k]
             temp[keys] = comp
 
-    print(temp)
     #loop through the componentIDs first, then find matching comp in circuit
     for element in componentIDs:
         val = 0
@@ -418,7 +417,7 @@ def getCircuitByStudent(studentNames: set) -> set:
     #find all the student IDs
     for element in names:
         for k in nameMap.keys():
-            if ',' in names:
+            if ',' in element:
                 n = str(element).split()
                 L = n[0].rstrip(',')
                 F = n[1]
@@ -426,14 +425,13 @@ def getCircuitByStudent(studentNames: set) -> set:
                 n = str(element).split()
                 F = n[0]
                 L = n[0]
-            if F == k.First:
-                if L == k.Last:
+            if F == k.First and L == k.Last:
                     studentID.append(nameMap[k])
 
-    for element in studentID:
+    for j in studentID:
         for k in circMap.keys():
             for item in circMap[k]:
-                if item == element:
+                if item == j:
                     result.add(k)
 
     return result
@@ -453,91 +451,4 @@ def getCircuitByComponent(componentIDs: set)-> set:
 
 
 if __name__ == "__main__":
-    r1 = getComponentCountByProject("08EDAB1A-743D-4B62-9446-2F1C5824A756", "R")
-    print("[Q{}] ans match? {}".format(1, r1 == 99))
-
-    r2 = getComponentCountByStudent("Young, Frank", "I")
-    print("[Q{}] ans match? {}".format(2, r2 == 14))
-
-    r3 = getParticipationByStudent("Young, Frank")
-    test_r3 = {'90BE0D09-1438-414A-A38B-8309A49C02EF', 'FE647EE2-2EBD-4837-83F0-256C377365FE',
-               '0F1FABFA-E112-4A66-A0B0-B7A2C14AD39A', '177EBF38-1C20-497B-A2EF-EC1880FEFDF9',
-               'D88C2930-9DA4-431F-8CDB-99A2AA2C7A05', '082D6241-40EE-432E-A635-65EA8AA374B6',
-               '7C376AFE-6D98-4E50-B29C-71FBF6260B2D', '4C5B295B-58E1-4CFB-80DF-88938B9A6300',
-               '075A54E6-530B-4533-A2E4-A15226BE588C', '6E30ADB2-7AD0-4E22-8A78-96135AAD7BD9',
-               'D230BAC0-249C-410F-84E4-41F9EDBFCB20', '3BB1CF3F-79B7-4AFC-95D8-FDEA4FAE9287',
-               '6CCCA5F3-3008-46FF-A779-2D2F872DAF82'}
-    print("[Q{}] ans match? {}".format(3, r3 == test_r3))
-
-    r4 = getParticipationByProject("08EDAB1A-743D-4B62-9446-2F1C5824A756")
-    test_r4 = {'Watson, Martin', 'Henderson, Christopher', 'Davis, Douglas', 'Gonzalez, Kimberly', 'Lowe, Karen',
-               'Green, Roy', 'Richardson, George', 'Wright, Eric', 'Thomas, Mark', 'Turner, Theresa', 'Kelly, Joyce',
-               'Moore, John', 'Brooks, Carol', 'Reed, Bobby', 'Coleman, Lori', 'Morgan, Edward', 'Bryant, Evelyn',
-               'Brown, Robert', 'Garcia, Martha', 'Anderson, Debra', 'Perry, Marie', 'Allen, Amanda', 'Gray, Tammy',
-               'Lewis, William', 'Cook, Margaret', 'Bennett, Nancy', 'Carter, Sarah', 'Hughes, James',
-               'Bell, Kathryn', 'Evans, Johnny', 'Thompson, Michelle', 'Cooper, Kelly', 'Torres, Betty',
-               'Morris, Heather', 'Powell, Gregory', 'Hill, Jose', 'Hall, Beverly', 'Lee, Julie', 'Simmons, Cynthia',
-               'Stewart, Earl', 'Ward, Sandra', 'Jackson, Doris', 'Wood, Kevin', 'Jones, Stephanie',
-               'Roberts, Teresa', 'Martinez, David', 'Phillips, Brenda', 'Russell, Scott', 'Gonzales, Arthur',
-               'Williams, Mary', 'Walker, Terry', 'Price, Dorothy', 'Clark, Joe', 'King, Carolyn', 'Ross, Frances',
-               'White, Diana', 'Campbell, Eugene', 'Foster, Benjamin', 'Taylor, Brian', 'Scott, Michael',
-               'Wilson, Howard', 'Smith, Jimmy', 'Harris, Anne'}
-    print("[Q{}] ans match? {}".format(4, r4 == test_r4))
-
-    r5 = getCostOfProjects()
-    test_r5 = {'56B13184-D087-48DB-9CBA-84B40FE17CC5': 355.36, '6E30ADB2-7AD0-4E22-8A78-96135AAD7BD9': 350.93,
-               '17A946D3-A1B0-4335-8808-8594D9FBD62C': 295.25, 'DE06228A-0544-4543-9055-A39D19DEDFA4': 375.37,
-               '082D6241-40EE-432E-A635-65EA8AA374B6': 245.46, 'D230BAC0-249C-410F-84E4-41F9EDBFCB20': 235.24,
-               '08EDAB1A-743D-4B62-9446-2F1C5824A756': 376.4, '7C376AFE-6D98-4E50-B29C-71FBF6260B2D': 249.63,
-               '66FA081D-D1AA-4306-8650-9C39429CCDAB': 256.63, '90BE0D09-1438-414A-A38B-8309A49C02EF': 335.16,
-               '96CC6F98-B44B-4FEB-A06B-390432C1F6EA': 268.48, '35C50EBA-E3A9-4AB7-A67C-64D4228C4DCA': 394.44,
-               '6CCCA5F3-3008-46FF-A779-2D2F872DAF82': 233.6, 'FE647EE2-2EBD-4837-83F0-256C377365FE': 213.73,
-               '8E56417E-0D81-4F43-8137-F1F7AA005654': 262.39, 'D88C2930-9DA4-431F-8CDB-99A2AA2C7A05': 428.72,
-               '177EBF38-1C20-497B-A2EF-EC1880FEFDF9': 334.98, '77A1A82E-749E-43BF-B3BF-3E70F087F808': 369.48,
-               'D7EFB850-9A34-41B0-BD9D-FBCDF4C3C371': 241.42, '3BB1CF3F-79B7-4AFC-95D8-FDEA4FAE9287': 370.65,
-               '2E7649C2-574A-496A-850B-F15190031E11': 304.08, '075A54E6-530B-4533-A2E4-A15226BE588C': 358.84,
-               '32B9E998-97C3-4D5A-8005-C9685A08196F': 400.34, '8C71F259-ECA8-4267-A8B3-6CAD6451D4CC': 325.13,
-               '83383848-1D69-40D4-A360-817FB22769ED': 367.49, '4C5B295B-58E1-4CFB-80DF-88938B9A6300': 388.81,
-               '0F1FABFA-E112-4A66-A0B0-B7A2C14AD39A': 292.63, 'B9C94766-617A-4168-B2AA-44FFE8323E32': 231.96}
-    print("[Q{}] ans match? {}".format(5, r5 == test_r5))
-
-    r6 = getProjectByComponent({"ZHT-034", "CWQ-065", "NOC-324"})
-    test_r6 = {'90BE0D09-1438-414A-A38B-8309A49C02EF', 'D7EFB850-9A34-41B0-BD9D-FBCDF4C3C371',
-               '6E30ADB2-7AD0-4E22-8A78-96135AAD7BD9', '32B9E998-97C3-4D5A-8005-C9685A08196F',
-               '96CC6F98-B44B-4FEB-A06B-390432C1F6EA', '2E7649C2-574A-496A-850B-F15190031E11',
-               'D88C2930-9DA4-431F-8CDB-99A2AA2C7A05', 'DE06228A-0544-4543-9055-A39D19DEDFA4',
-               '082D6241-40EE-432E-A635-65EA8AA374B6', '3BB1CF3F-79B7-4AFC-95D8-FDEA4FAE9287',
-               '0F1FABFA-E112-4A66-A0B0-B7A2C14AD39A', '35C50EBA-E3A9-4AB7-A67C-64D4228C4DCA',
-               'FE647EE2-2EBD-4837-83F0-256C377365FE', '7C376AFE-6D98-4E50-B29C-71FBF6260B2D',
-               '83383848-1D69-40D4-A360-817FB22769ED', 'B9C94766-617A-4168-B2AA-44FFE8323E32',
-               '77A1A82E-749E-43BF-B3BF-3E70F087F808', '66FA081D-D1AA-4306-8650-9C39429CCDAB'}
-    print("[Q{}] ans match? {}".format(6, r6 == test_r6))
-
-    r7 = getCommonByProject("08EDAB1A-743D-4B62-9446-2F1C5824A756", "082D6241-40EE-432E-A635-65EA8AA374B6")
-    test_r7 = ['ACT-109', 'ACU-407', 'AGC-216', 'ATI-589', 'AVL-897', 'BLT-317', 'CBU-096', 'CCT-418', 'CFI-435',
-               'CFY-502', 'CIS-470', 'CIW-539', 'CKN-960', 'CLG-567', 'CLJ-178', 'CLQ-971', 'CLW-864', 'CNM-019',
-               'CQL-174', 'CRU-015', 'CTM-765', 'CUH-362', 'CUP-407', 'DCB-178', 'DTX-021', 'ELQ-692', 'ERK-824',
-               'EVC-461', 'FCI-290', 'FUR-815', 'GTV-294', 'GVR-469', 'GVR-698', 'HFT-317', 'HLL-239', 'HLM-864',
-               'HOR-267', 'HRI-734', 'HUC-107', 'IBC-258', 'ILT-213', 'JLE-057', 'JNL-870', 'JSC-743', 'JTM-187',
-               'KLF-473', 'KPT-041', 'KSR-430', 'KUR-213', 'LAD-263', 'LAI-791', 'LAW-453', 'LCB-902', 'LCD-472',
-               'LIT-491', 'LJR-923', 'LLR-943', 'LOK-793', 'LRK-875', 'LRY-825', 'LRZ-426', 'LVE-357', 'LWY-204',
-               'MAT-263', 'MBR-643', 'MGC-590', 'MLJ-635', 'NCD-108', 'NUR-482', 'OLW-497', 'OPL-704', 'OUT-239',
-               'PTC-309', 'PTI-732', 'QIC-567', 'QXT-230', 'RCL-035', 'RCW-957', 'RFR-136', 'RFU-406', 'RHN-426',
-               'RIK-619', 'RKP-916', 'RLL-937', 'RMY-042', 'RNW-027', 'ROJ-198', 'RPK-296', 'RSB-276', 'RSH-743',
-               'RTN-652', 'RWR-683', 'SJL-465', 'TAQ-610', 'TAU-413', 'TCH-815', 'TED-890', 'TIR-328', 'TLP-793',
-               'TLR-058', 'TOM-325', 'TQJ-016', 'TSC-032', 'TSW-590', 'TTC-861', 'TVC-129', 'UMT-238', 'UNL-746',
-               'URK-539', 'UTA-912', 'UTH-014', 'VFL-589', 'VNR-234', 'VSR-074', 'VTL-437', 'WHT-451', 'XRJ-639',
-               'XRY-260', 'XRZ-943', 'YKC-827', 'YLF-462', 'YWT-432', 'ZTN-927', 'ZWR-028']
-    print("[Q{}] ans match? {}".format(7, r7 == test_r7))
-
-    r8 = getComponentReport({"ZHT-034", "CWQ-065", "NOC-324"})
-    test_r8 = {'CWQ-065': 0, 'NOC-324': 21, 'ZHT-034': 0}
-    print("[Q{}] ans match? {}".format(8, r8 == test_r8))
-
-    r9 = getCircuitByStudent({"Adams, Keith", "Young, Frank "})
-    test_r9 = {'60-9-98', '51-8-46'}
-    print("[Q{}] ans match? {}".format(9, r9 == test_r9))
-
-    r10 = getCircuitByComponent({"ZHT-034", "CWQ-065", "NOC-324"})
-    test_r10 = {'15-5-65', '65-2-28', '35-6-63', '41-0-60', '24-6-74', '65-0-76'}
-    print("[Q{}] ans match? {}".format(10, r10 == test_r10))
+    ...
