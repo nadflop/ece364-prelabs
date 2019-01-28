@@ -262,12 +262,21 @@ def getComponentByStudent(studentName: str, componentSymbol: str) -> int:
 #-------------------------------------problem 3------------------------------------------------------------------------
 def getParticipationByStudent(studentName: str) -> set:
     studMap = studentToIDMap()
-    [F, L] = studentName.split()
+    if ',' in studentName:
+        name = studentName.split()
+        L = name[0].rstrip(',')
+        F = name[1]
+    else:
+        [F, L] = studentName.split()
+
     ID = ''
 
     for k in studMap.keys():
         if [k.First, k.Last] == [F, L]:
             ID = studMap[k]
+        if k.First == F:
+            if k.Last == L:
+                ID = studMap[k]
 
     if len(ID) == 0:
         raise ValueError("The student name passed doesn't exist")
@@ -393,9 +402,16 @@ def getCircuitByStudent(studentNames: set) -> set:
     #find all the student IDs
     for element in names:
         for k in nameMap.keys():
-            n = str(element).split()
-            if n[0] == k.First:
-                if n[1] == k.Last:
+            if ',' in names:
+                n = str(element).split()
+                L = n[0].rstrip(',')
+                F = n[1]
+            else:
+                n = str(element).split()
+                F = n[0]
+                L = n[0]
+            if F == k.First:
+                if L == k.Last:
                     studentID.append(nameMap[k])
 
     for element in studentID:
