@@ -360,7 +360,21 @@ def getCommonByProject(projectID1, projectID2):
     return (list(circuit3))
 #------------------------------------problem 8--------------------------------------------------------------------------
 def getComponentReport(componentIDs: set)-> dict:
-    pass
+    circMap = circToCompMap() #get the mapping between circuits and component
+    component = list(componentIDs)
+    circID = { }
+    val = 0
+
+    #loop through the componentIDs first, then find matching comp in circuit
+    for element in component:
+        val = 0
+        for keys in circMap.keys():
+            for item in circMap[keys]:
+                if element == item:
+                    val = val + 1 #keep track the number of occurences
+                    circID[element] = val
+
+    return circID
 #-----------------------------------problem 9---------------------------------------------------------------------------
 def getCircuitByStudent(studentNames: set) -> set:
     pass
@@ -389,3 +403,4 @@ if __name__  == "__main__":
     c.add('RFU-406')
     c.add('BRT-517')
     getProjectByComponent(c)
+    getComponentReport(c)
