@@ -380,8 +380,17 @@ def getCircuitByStudent(studentNames: set) -> set:
     pass
 #-----------------------------------problem 10--------------------------------------------------------------------------
 def getCircuitByComponent(componentIDs: set)-> set:
-    pass
+    circMap = circToCompMap()
+    comp = list(componentIDs)
+    circID = set()
 
+    for item in comp:
+        for k in circMap.keys():
+            for element in circMap[k]:
+                if element == item:
+                    circID.add(k)
+
+    return circID
 
 
 # This  block  is  optional
@@ -404,3 +413,4 @@ if __name__  == "__main__":
     c.add('BRT-517')
     getProjectByComponent(c)
     getComponentReport(c)
+    getCircuitByComponent(c)
