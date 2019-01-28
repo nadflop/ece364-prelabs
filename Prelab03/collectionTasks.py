@@ -320,8 +320,25 @@ def getCostOfProjects() -> dict:
 #-------------------------------------problem 6-------------------------------------------------------------------------
 def getProjectByComponent(componentIDs: set) -> set:
     result = set()
+    projMap = projToCircMap()
+    circMap = circToCompMap() #get the mapping between circuits and component
+    component = list(componentIDs)
+    circID = set()
 
+    #get the circuit ID for the components in the list
+    for keys in circMap.keys():
+        for element in component:
+            for item in circMap[keys]:
+                if element == item:
+                    circID.add(keys)
 
+    circuit = list(circID)
+
+    for keys in projMap.keys():
+        for element in circuit:
+            for item in projMap[keys]:
+                if element == item:
+                    result.add(keys)
 
     return result
 #-------------------------------------problem 7-------------------------------------------------------------------------
@@ -368,3 +385,7 @@ if __name__  == "__main__":
     projToStudID()
     getParticipationByStudent('Keith Adams')
     getParticipationByProject('177EBF38-1C20-497B-A2EF-EC1880FEFDF9')
+    c = set()
+    c.add('RFU-406')
+    c.add('BRT-517')
+    getProjectByComponent(c)
