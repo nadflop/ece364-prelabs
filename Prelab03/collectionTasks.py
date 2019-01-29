@@ -163,7 +163,7 @@ def projToStudID():
             for component in circMap.get(circuit):
                 s1.append(component)
         projStudMap[projID] = s1
-    
+
     return projStudMap
 #-----------------------------------problem 1---------------------------------------------------------------------------
 def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
@@ -277,7 +277,7 @@ def getParticipationByStudent(studentName: str) -> set:
         for element in projMap[k]:
             if element == ID:
                 result.add(k)#add the proj ID into the set
-    print(len(result))
+
     return result
 #-------------------------------------problem 4-------------------------------------------------------------------------
 def getParticipationByProject(projectID):
@@ -290,9 +290,9 @@ def getParticipationByProject(projectID):
             for element in projMap[k]:
                 for item in studID.keys():
                     if element == item:
-                        name = studID[item].First + ' ' + studID[item].Last
+                        name = studID[item].Last + ', ' + studID[item].First
                         result.add(name) #add the name to the set
-    print(len(result))
+
     return result
 #------------------------------------problem 5--------------------------------------------------------------------------
 def getCostOfProjects() -> dict:
@@ -459,7 +459,7 @@ if __name__ == "__main__":
                '075A54E6-530B-4533-A2E4-A15226BE588C', '6E30ADB2-7AD0-4E22-8A78-96135AAD7BD9',
                'D230BAC0-249C-410F-84E4-41F9EDBFCB20', '3BB1CF3F-79B7-4AFC-95D8-FDEA4FAE9287',
                '6CCCA5F3-3008-46FF-A779-2D2F872DAF82'}
-    print(len(test_r3))
+
     print("[Q{}] ans match? {}".format(3, r3 == test_r3))
 
     r4 = getParticipationByProject("08EDAB1A-743D-4B62-9446-2F1C5824A756")
@@ -475,7 +475,17 @@ if __name__ == "__main__":
                'Williams, Mary', 'Walker, Terry', 'Price, Dorothy', 'Clark, Joe', 'King, Carolyn', 'Ross, Frances',
                'White, Diana', 'Campbell, Eugene', 'Foster, Benjamin', 'Taylor, Brian', 'Scott, Michael',
                'Wilson, Howard', 'Smith, Jimmy', 'Harris, Anne'}
-    print(len(test_r4))
+    {'Brenda Phillips', 'Edward Morgan', 'Jose Hill', 'Carol Brooks', 'Sandra Ward', 'Michelle Thompson',
+     'Howard Wilson', 'Arthur Gonzales', 'Carolyn King', 'Margaret Cook', 'Martha Garcia', 'Terry Walker',
+     'Lori Coleman', 'Roy Green', 'Martin Watson', 'Benjamin Foster', 'Evelyn Bryant', 'Beverly Hall',
+     'George Richardson', 'Kelly Cooper', 'Debra Anderson', 'Jimmy Smith', 'Robert Brown', 'Betty Torres',
+     'Eugene Campbell', 'David Martinez', 'Douglas Davis', 'Kimberly Gonzalez', 'Michael Scott', 'Frances Ross',
+     'John Moore', 'Kathryn Bell', 'Joyce Kelly', 'Heather Morris', 'Stephanie Jones', 'Dorothy Price', 'Mary Williams',
+     'Nancy Bennett', 'Diana White', 'Bobby Reed', 'Teresa Roberts', 'Amanda Allen', 'Christopher Henderson',
+     'Brian Taylor', 'Kevin Wood', 'Julie Lee', 'Sarah Carter', 'Joe Clark', 'Theresa Turner', 'Doris Jackson',
+     'Cynthia Simmons', 'Anne Harris', 'Karen Lowe', 'James Hughes', 'Eric Wright', 'Scott Russell', 'Marie Perry',
+     'Johnny Evans', 'Tammy Gray', 'William Lewis', 'Mark Thomas', 'Earl Stewart', 'Gregory Powell'}
+    print(r4)
     print("[Q{}] ans match? {}".format(4, r4 == test_r4))
 
     r5 = getCostOfProjects()
