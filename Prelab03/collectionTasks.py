@@ -153,19 +153,17 @@ def IDToStud():
 def projToStudID():
     projMap = projToCircMap() #get the mapping between projID and circuit ID
     circMap = circToStudent() #get the mapping between circuit ID and student ID
-    s1 = set() #create an empty set
+    s1 = [ ] #create an empty set
     projStudMap = { }
 
     #do mapping between projID and studentID
-    for keys in projMap.keys():
-        for item in projMap[keys]:
-            s1 = set()
-            for k in circMap.keys():
-                if item == k: #if its the same circuit ID
-                    s2 = set(circMap[k])
-                    s1= s1 | s2
-                projStudMap[keys] = s1
-
+    for projID in projMap.keys():
+        s1 = [ ]
+        for circuit in projMap[projID]:
+            for component in circMap.get(circuit):
+                s1.append(component)
+        projStudMap[projID] = s1
+    
     return projStudMap
 #-----------------------------------problem 1---------------------------------------------------------------------------
 def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
@@ -189,12 +187,7 @@ def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
             for j in s1:
                 if k == j:
                     result.add(k)
-                    '''
-                    if k in result:  # make sure the item is distinct
-                        del result[result.index(k)]
-                    else:
-                        result.append(k)
-                    '''
+
     return len(result)
 #-------------------------------------------------problem 2-------------------------------------------------------------
 def getComponentCountByStudent(studentName: str, componentSymbol: str) -> int:
@@ -277,13 +270,14 @@ def getParticipationByStudent(studentName: str) -> set:
         raise ValueError("The student name passed doesn't exist")
 
     projMap = projToStudID()
+
     result = set()
 
     for k in projMap.keys():
         for element in projMap[k]:
             if element == ID:
                 result.add(k)#add the proj ID into the set
-
+    print(len(result))
     return result
 #-------------------------------------problem 4-------------------------------------------------------------------------
 def getParticipationByProject(projectID):
@@ -298,7 +292,7 @@ def getParticipationByProject(projectID):
                     if element == item:
                         name = studID[item].First + ' ' + studID[item].Last
                         result.add(name) #add the name to the set
-
+    print(len(result))
     return result
 #------------------------------------problem 5--------------------------------------------------------------------------
 def getCostOfProjects() -> dict:
@@ -465,6 +459,7 @@ if __name__ == "__main__":
                '075A54E6-530B-4533-A2E4-A15226BE588C', '6E30ADB2-7AD0-4E22-8A78-96135AAD7BD9',
                'D230BAC0-249C-410F-84E4-41F9EDBFCB20', '3BB1CF3F-79B7-4AFC-95D8-FDEA4FAE9287',
                '6CCCA5F3-3008-46FF-A779-2D2F872DAF82'}
+    print(len(test_r3))
     print("[Q{}] ans match? {}".format(3, r3 == test_r3))
 
     r4 = getParticipationByProject("08EDAB1A-743D-4B62-9446-2F1C5824A756")
@@ -480,6 +475,7 @@ if __name__ == "__main__":
                'Williams, Mary', 'Walker, Terry', 'Price, Dorothy', 'Clark, Joe', 'King, Carolyn', 'Ross, Frances',
                'White, Diana', 'Campbell, Eugene', 'Foster, Benjamin', 'Taylor, Brian', 'Scott, Michael',
                'Wilson, Howard', 'Smith, Jimmy', 'Harris, Anne'}
+    print(len(test_r4))
     print("[Q{}] ans match? {}".format(4, r4 == test_r4))
 
     r5 = getCostOfProjects()
