@@ -380,7 +380,6 @@ def getComponentReport(componentIDs: set)-> dict:
     temp = { }
     comp = [ ]
     val = 0
-    i = 0
 
     #for items in componentIDs:
     for projID in projMap.keys():
@@ -475,17 +474,7 @@ if __name__ == "__main__":
                'Williams, Mary', 'Walker, Terry', 'Price, Dorothy', 'Clark, Joe', 'King, Carolyn', 'Ross, Frances',
                'White, Diana', 'Campbell, Eugene', 'Foster, Benjamin', 'Taylor, Brian', 'Scott, Michael',
                'Wilson, Howard', 'Smith, Jimmy', 'Harris, Anne'}
-    {'Brenda Phillips', 'Edward Morgan', 'Jose Hill', 'Carol Brooks', 'Sandra Ward', 'Michelle Thompson',
-     'Howard Wilson', 'Arthur Gonzales', 'Carolyn King', 'Margaret Cook', 'Martha Garcia', 'Terry Walker',
-     'Lori Coleman', 'Roy Green', 'Martin Watson', 'Benjamin Foster', 'Evelyn Bryant', 'Beverly Hall',
-     'George Richardson', 'Kelly Cooper', 'Debra Anderson', 'Jimmy Smith', 'Robert Brown', 'Betty Torres',
-     'Eugene Campbell', 'David Martinez', 'Douglas Davis', 'Kimberly Gonzalez', 'Michael Scott', 'Frances Ross',
-     'John Moore', 'Kathryn Bell', 'Joyce Kelly', 'Heather Morris', 'Stephanie Jones', 'Dorothy Price', 'Mary Williams',
-     'Nancy Bennett', 'Diana White', 'Bobby Reed', 'Teresa Roberts', 'Amanda Allen', 'Christopher Henderson',
-     'Brian Taylor', 'Kevin Wood', 'Julie Lee', 'Sarah Carter', 'Joe Clark', 'Theresa Turner', 'Doris Jackson',
-     'Cynthia Simmons', 'Anne Harris', 'Karen Lowe', 'James Hughes', 'Eric Wright', 'Scott Russell', 'Marie Perry',
-     'Johnny Evans', 'Tammy Gray', 'William Lewis', 'Mark Thomas', 'Earl Stewart', 'Gregory Powell'}
-    print(r4)
+
     print("[Q{}] ans match? {}".format(4, r4 == test_r4))
 
     r5 = getCostOfProjects()
