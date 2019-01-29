@@ -70,7 +70,7 @@ def circToStudent():
             data = [line.strip() for line in f.read().splitlines()]
         t = item.replace('circuit_', '')
         s = t.replace('.dat', '')
-        circStudMap[s] = data[2:data.index('Components:')]
+        circStudMap[s] = data[2:data.index('Components:')- 1]
 
     return circStudMap
 #-------------------------------------------mapping between circuit ID and student--------------------------------------
@@ -83,17 +83,17 @@ def compToTypeMap():
     compMap = { }
 
     DataFile = os.path.join(DataPath, 'maps')
-    for v in typeMap.values():
-        DataText = os.path.join(DataFile, v)  # open the associated component file
+    for filename in typeMap.values():
+        DataText = os.path.join(DataFile, filename)  # open the associated component file
         with open(DataText) as f:
             data = [line.strip() for line in f.read().splitlines()]
-        for k in typeMap.keys():
+        for symbol in typeMap.keys():
             component = [ ]
-            if typeMap[k] == v:
+            if typeMap[symbol] == filename:
                 for item in data[3:]:
                     item = item.split()
                     component.append(item[0])
-                compMap[k] = component
+                compMap[symbol] = component
 
     return compMap
 #----------------------------mapping between cost of component and their IDs--------------------------------------------
@@ -106,12 +106,12 @@ def compToCostMap():
     costMap = { }
 
     DataFile = os.path.join(DataPath, 'maps')
-    for v in typeMap.values():
-        DataText = os.path.join(DataFile, v)  # open the associated component file
+    for filename in typeMap.values():
+        DataText = os.path.join(DataFile, filename)  # open the associated component file
         with open(DataText) as f:
             data = [line.strip() for line in f.read().splitlines()]
-        for k in typeMap.keys():
-            if typeMap[k] == v:
+        for keys in typeMap.keys():
+            if typeMap[keys] == filename:
                 for item in data[3:]:
                     item = item.split()
                     costMap[item[0]] = item[1].replace('$', '')
@@ -124,13 +124,11 @@ def studentToIDMap():
     with open(DataText) as f:
         data = [line.split() for line in f.read().splitlines()]
 
-    from collections import namedtuple
-    Student = namedtuple("Student", ["First", "Last"])
-
     studMap = { }
 
     for item in data[2:]:
-        studMap[Student(item[1], item[0].rstrip(','))] = item[-1]
+        name = item[0] + ' ' + item[1]
+        studMap[name] = item[-1]
 
     return studMap
 #----------------------------------------mapping between student ID to its name-----------------------------------------
@@ -140,13 +138,11 @@ def IDToStud():
     with open(DataText) as f:
         data = [line.split() for line in f.read().splitlines()]
 
-    from collections import namedtuple
-    Student = namedtuple("Student", ["First", "Last"])
-
     studMap = { }
 
     for item in data[2:]:
-        studMap[item[-1]] = Student(item[1], item[0].rstrip(','))
+        name = item[0] + ' ' + item[1]
+        studMap[item[-1]] = name
 
     return studMap
 #----------------------------------------mapping between projID to student ID-------------------------------------------
@@ -183,31 +179,18 @@ def getComponentCountByProject(projectID: str, componentSymbol: str) -> int:
     circMap = circToCompMap()#mapping between circuitID and the components
 
     for item in circuit:
-        for k in circMap.get(item): #components
-            for j in s1:
-                if k == j:
-                    result.add(k)
+        for components in circMap.get(item): #components
+            for element in s1:
+                if components == element:
+                    result.add(components)
 
     return len(result)
 #-------------------------------------------------problem 2-------------------------------------------------------------
 def getComponentCountByStudent(studentName: str, componentSymbol: str) -> int:
     studMap = studentToIDMap()
-    if ',' in studentName:
-        name = studentName.split()
-        L = name[0].rstrip(',')
-        F = name[1]
-    else:
-        [F, L] = studentName.split()
 
-    ID = ''
+    ID = studMap[studentName]
     s1 = set()
-
-    for k in studMap.keys():
-        if [k.First, k.Last] == [F, L]:
-            ID = studMap[k]
-        if k.First == F:
-            if k.Last == L:
-                ID = studMap[k]
 
     if len(ID) == 0:
         raise ValueError("The student name passed doesn't exist")
@@ -251,26 +234,11 @@ def getComponentCountByStudent(studentName: str, componentSymbol: str) -> int:
 #-------------------------------------problem 3------------------------------------------------------------------------
 def getParticipationByStudent(studentName: str) -> set:
     studMap = studentToIDMap()
-    if ',' in studentName:
-        name = studentName.split()
-        L = name[0].rstrip(',')
-        F = name[1]
-    else:
-        [F, L] = studentName.split()
-
-    ID = ''
-
-    for k in studMap.keys():
-        if [k.First, k.Last] == [F, L]:
-            ID = studMap[k]
-        if k.First == F and k.Last == L:
-                ID = studMap[k]
-
+    ID = studMap[studentName]
     if len(ID) == 0:
         raise ValueError("The student name passed doesn't exist")
 
     projMap = projToStudID()
-
     result = set()
 
     for k in projMap.keys():
@@ -291,10 +259,8 @@ def getParticipationByProject(projectID):
         raise ValueError("Project ID doesn't exists")
 
     for element in student:
-        for item in studID.keys():
-            if element == item:
-                name = studID[item].Last + ', ' + studID[item].First
-                result.add(name) #add the name to the set
+        name  = studID[element]
+        result.add(name)
 
     return result
 #------------------------------------problem 5--------------------------------------------------------------------------
@@ -350,11 +316,10 @@ def getProjectByComponent(componentIDs: set) -> set:
 def getCommonByProject(projectID1, projectID2):
     projMap = projToCircMap()
     circMap = circToCompMap()
-    circuit1 = set()
-    circuit2 = set()
-
-    circuit1 = set(projMap[projectID1])  # get all list of circuits build in proj
-    circuit2 = set(projMap[projectID2])  # get all list of circuits build in proj
+    circuit1 = [ ]
+    circuit2 = [ ]
+    circuit1 = projMap[projectID1]  # get all list of circuits build in proj
+    circuit2 = projMap[projectID2]  # get all list of circuits build in proj
 
     if len(circuit1) == 0:
         raise ValueError("The projectID1 doesn't seems to exists")
@@ -413,22 +378,14 @@ def getCircuitByStudent(studentNames: set) -> set:
     #find all the student IDs
     for element in names:
         for k in nameMap.keys():
-            if ',' in element:
-                n = str(element).split()
-                L = n[0].rstrip(',')
-                F = n[1]
-            else:
-                n = str(element).split()
-                F = n[0]
-                L = n[0]
-            if F == k.First and L == k.Last:
-                    studentID.append(nameMap[k])
+            if element == k:
+                studentID.append(nameMap[k])
 
-    for j in studentID:
-        for k in circMap.keys():
-            for item in circMap[k]:
-                if item == j:
-                    result.add(k)
+    for ID in studentID:
+        for circuit in circMap.keys():
+            for element in circMap[circuit]:
+                if element == ID:
+                    result.add(circuit)
 
     return result
 #-----------------------------------problem 10--------------------------------------------------------------------------
