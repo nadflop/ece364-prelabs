@@ -29,16 +29,11 @@ def techData(key: int):
             techDict[item[-1]] = name
 
     return techDict
-    '''
-    from collections import namedtuple
-    virus = namedtuple("virus", ["name", "unit"])
 
-    for element in data[4:]:
-        [t, v, u] = element.split()
-        virusData = virus(v, u)
-        virusList.append(virusData)
-    '''
-def reportData(): #get mapping between ID and report
+def reportData(key): #get mapping between ID and report
+    from collections import namedtuple
+    virus = namedtuple("virus", ["user", "ID", "unit"])
+
     DataFile = os.path.join(DataPath, 'reports')
     flname = []
 
@@ -57,29 +52,47 @@ def reportData(): #get mapping between ID and report
         reportID.append(t.replace('.dat', '')) #report ID
 
         temp = str(data[0]).split() #get techID
-        userID = temp[-1]
+        userID = str(temp[-1])
 
-        if userID in reportDict:
-            reportDict[userID] += reportID
-        else:
-            reportDict[userID] = reportID
+        if key == 0: #just get data between reportID and userID
+            if userID in reportDict:
+                reportDict[userID] += reportID
+            else:
+                reportDict[userID] = reportID
+        if key == 1: #get reportID, userID, virus names and amount
+            virusList = []
+            for item in data[4:]:
+                [t,v,u] = item.split()
+                virusList.append(virus(userID,v,u))
+            reportDict[reportID[0]] = virusList
 
     return reportDict
 
+def virusData(key): #get mapping between virus name, ID and price
+    from collections import namedtuple
+    virus = namedtuple("virus", ["ID", "price"])
 
-def createDict(key, value)-> dict:
-    myDict = { }
+    DataFile = os.path.join(DataPath, 'maps')
+    DataText = os.path.join(DataFile, 'viruses.dat')
+    with open(DataText) as f:
+        data = [line.split() for line in f.read().splitlines()]
 
-    for item in key:
-        for element in value:
-            myDict[item] = element
+    virusDict = { }
 
-    return myDict
+    for element in data[2:]:
+        while '|' in element:
+            element.remove('|')
+        if key == 0: #name as key
+            virusDict[element[0]] = virus(element[1], element[2].replace('$', ''))
+        elif key == 1: #ID as key
+            virusDict[element[1]] = virus(element[0], element[2].replace('$', ''))
 
+    return virusDict
+#------------------------------problem 1--------------------------------------------------------------------------------
 def getTechWork(techName: str) -> dict:
     DataFolder = os.path.join(DataPath, 'reports')
     techDict = techData(0) #get dict between name and ID
-    reportDict = reportData()
+    reportDict = reportData(0)
     resultDict = { }
 
     for filename in reportDict[techDict[techName]]:
@@ -95,41 +108,46 @@ def getTechWork(techName: str) -> dict:
                 resultDict[v] = int(u)
 
     return resultDict
-
+#-----------------------------------------problem 2---------------------------------------------------------------------
 def getStrainConsumption(virusName: str)-> dict:
-    DataFile = os.path.join(DataPath, 'reports')
-    flname = []
-    for root, dirs, files in os.walk(DataFile):
-        for filename in files:
-            flname.append(filename)
+    DataFolder = os.path.join(DataPath, 'reports')
+    reportDict = reportData(0)
+    virusDict = virusData(1)
+    techDict = techData(1)
+    resultDict = { }
 
-    reportDict = { }
+    for userID in reportDict.keys():
+        for filename in reportDict[userID]:
+            DataFile = os.path.join(DataFolder, 'report_' + filename + '.dat')
+            with open(DataFile) as f:
+                data = [line.strip() for line in f.read().splitlines()]
 
-    for item in flname:
-        CircFile = os.path.join(DataFile, item)
-        with open(CircFile) as f:
-            data = [line.strip() for line in f.read().splitlines()]
-        t = item.replace('report_', '')
-        s = t.replace('.dat', '')
-        reportDict[s] = data[2:data.index('Components:')- 1]
+            for line in data[4:]:
+                [t,v,u] = str(line).split()
 
-    pass
+                if virusName in virusDict[v].ID:
+                    if userID in resultDict:
+                        resultDict[techDict.get(userID)] += int(u)
+                    else:
+                        resultDict[techDict.get(userID)] = int(u)
 
+    return resultDict
+#------------------------------------------------problem 3--------------------------------------------------------------
 def getTechSpending()-> dict:
     #round value by 2 decimals
     pass
-
+#----------------------------------------------problem 4----------------------------------------------------------------
 def getStrainCost()-> dict:
     #round value by 2 decimals
     pass
-
+#-------------------------------------------------problem 5-------------------------------------------------------------
 def getAbsentTech()-> set:
     pass
-
+#--------------------------------------------------problem 6------------------------------------------------------------
 def getUnusedStrains()-> set:
     pass
 
 
 if __name__ == "__main__":
     getTechWork('Adams, Keith')
-    reportData()
+    getStrainConsumption('Hepadnaviridae')
