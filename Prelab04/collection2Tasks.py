@@ -98,15 +98,16 @@ def getTechWork(techName: str) -> dict:
 #-----------------------------------------problem 2---------------------------------------------------------------------
 def getStrainConsumption(virusName: str)-> dict:
     reportDict = reportData(1)#key: report ID, value: (user, virusID, unit)
-    virusDict = virusData(1) #key: virusID, value: (virusName, price)
+    virusDict = virusData(0) #key: virusName, value: (virusID, price)
     techDict = techData(1) #key: techID, value: techName
     resultDict = { }
+    virusID = virusDict[virusName].ID
 
     for element in reportDict.values():
         for v in element:
-            if virusName == virusDict[v[1]].ID:
+            if virusID == v[1]:
                 userID = v[0]
-                if userID in resultDict:
+                if techDict.get(userID) in resultDict:
                     resultDict[techDict.get(userID)] += int(v[2])
                 else:
                     resultDict[techDict.get(userID)] = int(v[2])
@@ -122,8 +123,9 @@ def getTechSpending()-> dict: #round value by 2 decimals
     for element in reportDict.values():
         for v in element:
             userID = v[0]
-            if userID in resultDict:
-                resultDict[techDict.get(userID)] += round(float(virusDict[v[1]].price) * int(v[2]), 2)
+            if techDict.get(userID) in resultDict:
+                value = round(float(resultDict[techDict.get(userID)]) + float(virusDict[v[1]].price) * int(v[2]),2)
+                resultDict[techDict.get(userID)] = value
             else:
                 resultDict[techDict.get(userID)] = round(float(virusDict[v[1]].price) * int(v[2]), 2)
 
@@ -139,8 +141,9 @@ def getStrainCost()-> dict:
         for element in reportDict.values():
             for v in element:
                 if virusID == v[1]:
-                    if virusID in resultDict:
-                        resultDict[virusDict[v[1]].ID] += round(float(virusDict[v[1]].price) * int(v[2]), 2)
+                    if virusDict[v[1]].ID in resultDict:
+                        value = round(float(resultDict[virusDict[v[1]].ID]) + float(virusDict[v[1]].price) * int(v[2]), 2)
+                        resultDict[virusDict[v[1]].ID] = value
                     else:
                         resultDict[virusDict[v[1]].ID] = round(float(virusDict[v[1]].price) * int(v[2]), 2)
 
