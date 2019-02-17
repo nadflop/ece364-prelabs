@@ -7,6 +7,7 @@
 import os      # List of  module  import  statements
 import sys     # Each  one on a line
 import re
+from uuid import UUID
 # Module  level  Variables. (Write  this  statement  verbatim .)
 #######################################################
 DataPath = os.path.expanduser("~ee364/DataFolder/Prelab06")
@@ -47,10 +48,6 @@ def getRealMAC(sentence:str)-> str :
 
 #PART 2
 #name, ID, phone, state
-#if ID and state are present, ID first then state
-#if have everything = excepted
-#if have name but no other = rejected
-#if have name and one or two additional fields, partially complete
 def getRejectedEntries()-> list:
     rejected = []
     DataFile = os.path.join(DataPath, 'Employees.txt')
@@ -76,23 +73,128 @@ def getRejectedEntries()-> list:
     return rejected
 def getEmployeesWithIDs()-> dict:
     #key: employee name, value: ID
-    pass
+    resultDict = {}
+    DataFile = os.path.join(DataPath, 'Employees.txt')
+    with open(DataFile, "r") as f:
+        data = f.readlines()
+
+    for lines in data:
+        name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
+        if name == None:
+            name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
+        id = re.search(r'\b[(0-9)(a-fA-F)]{8}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{12}',lines,re.I)
+        if id != None:
+            n = str(name["first"]+' '+name["last"])
+            resultDict[n] = str(UUID(id.group()))
+
+    return resultDict
 
 def getEmployeesWithoutIDs()-> list:
-    pass
+    result = []
+    DataFile = os.path.join(DataPath, 'Employees.txt')
+    with open(DataFile, "r") as f:
+        data = f.readlines()
+
+    for lines in data:
+        name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
+        if name == None:
+            name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
+        id = re.search(r'\b[(0-9)(a-fA-F)]{8}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{12}',lines,re.I)
+        if id == None:
+            n = str(name["first"]+' '+name["last"])
+            result.append(n)
+
+    return result
 
 def getEmployeesWithPhones()-> dict:
     #key: employee name, value: phone number
-    pass
+    resultDict = {}
+    DataFile = os.path.join(DataPath, 'Employees.txt')
+    with open(DataFile, "r") as f:
+        data = f.readlines()
+
+    for lines in data:
+        name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
+        if name == None:
+            name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
+        no = re.search(r'\b[\d]{10}|\b[\d-]{12}|\([^()]+\)\s\d+-\d+', lines)
+        if no != None:
+            n = str(name["first"]+' '+name["last"])
+            if len(no.group()) == 14:
+                resultDict[n] = no.group()
+            elif len(no.group()) == 12:
+                part = re.search(r'(?P<one>[\d]+[^-])-(?P<two>[\d]+[^-])-(?P<three>[\d]+)', no.group())
+                nmbr = '(' + part["one"] + ')' + ' ' + part["two"] + '-' + part["three"]
+                resultDict[n] = nmbr
+            elif len(no.group()) == 10:
+                part = re.search(r'(?P<one>[\d]{3})(?P<two>[\d]{3})(?P<three>[\d]{4})', no.group())
+                nmbr = '(' + part["one"] + ')' + ' ' + part["two"] + '-' + part["three"]
+                resultDict[n] = nmbr
+
+    return resultDict
 
 def getEmployeesWithStates()-> dict:
     #key: employee name, value: state name
-    pass
+    resultDict = {}
+    DataFile = os.path.join(DataPath, 'Employees.txt')
+    with open(DataFile, "r") as f:
+        data = f.readlines()
+
+    for lines in data:
+        name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
+        if name == None:
+            name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
+        state = re.search(r'([(a-zA-Z)\s]+\Z)', lines)
+        if state != None:
+            temp = re.search(r'[(a-zA-Z)\s][^\n]+', str(state.group()), re.MULTILINE)  # seperate the \n
+            if temp != None:
+                state = temp.group()
+            else:
+                state = None
+        if state != None:
+            n = str(name["first"]+' '+name["last"])
+            resultDict[n] = state
+
+    return resultDict
 
 def getCompleteEntries()-> dict:
     #key: employee name,
     # value: tuple(ID, phone number, state of residence)
-    pass
+    complete = {}
+    DataFile = os.path.join(DataPath, 'Employees.txt')
+    with open(DataFile, "r") as f:
+        data = f.readlines()
+
+    for lines in data:
+        name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
+        if name == None:
+            name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
+        id = re.search(r'\b[(0-9)(a-fA-F)]{8}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{12}',lines,re.I)
+        no = re.search(r'\b[\d]{10}|\b[\d-]{12}|\([^()]+\)\s\d+-\d+', lines)
+        state = re.search(r'([(a-zA-Z)\s]+\Z)', lines)
+        if state != None:
+            temp = re.search(r'[(a-zA-Z)\s][^\n]+', str(state.group()), re.MULTILINE)  # seperate the \n
+            if temp != None:
+                state = temp.group()
+            else:
+                state = None
+
+        if no != None:
+            if len(no.group()) == 14:
+                nmbr = no.group()
+            elif len(no.group()) == 12:
+                part = re.search(r'(?P<one>[\d]+[^-])-(?P<two>[\d]+[^-])-(?P<three>[\d]+)', no.group())
+                nmbr = '(' + part["one"] + ')' + ' ' + part["two"] + '-' + part["three"]
+            elif len(no.group()) == 10:
+                part = re.search(r'(?P<one>[\d]{3})(?P<two>[\d]{3})(?P<three>[\d]{4})', no.group())
+                nmbr = '(' + part["one"] + ')' + ' ' + part["two"] + '-' + part["three"]
+
+        if id != None and len(nmbr) != 0 and state != None:
+            n = name["first"]+ ' '+name["last"]
+            element = (str(UUID(id.group())), nmbr, state)
+            complete[n] = element
+
+    return complete
 
 
 if __name__ == "__main__":
@@ -105,3 +207,8 @@ if __name__ == "__main__":
     pp(getSpecial(s,"t"))
     pp(getRealMAC('hello 58:1C:0A:6E:39:4D eh kau pehal 3F:0B:55:A7:3E:99'))
     pp(getRejectedEntries())
+    pp(getEmployeesWithIDs())
+    pp(getEmployeesWithoutIDs())
+    pp(getEmployeesWithPhones())
+    pp(getEmployeesWithStates())
+    pp(getCompleteEntries())
