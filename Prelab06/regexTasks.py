@@ -13,6 +13,7 @@ from uuid import UUID
 DataPath = os.path.expanduser("~ee364/DataFolder/Prelab06")
 
 #PART 1
+#-------------------------------------------------problem 1-------------------------------------------------------------
 def getUrlParts(url: str)-> tuple :
     #'http://[Base adress]/[controller]/[action]?[querystring]
     pattern = re.search('(?P<address>[\w.-]+)\/(?P<controller>[\w.-]+)\/(?P<action>[\w.-]+)', url)
@@ -22,7 +23,7 @@ def getUrlParts(url: str)-> tuple :
     parts = (addrs,ctrl,act)
 
     return parts
-
+#-------------------------------------------------problem 2-------------------------------------------------------------
 def getQueryParameters(url: str)-> list:
     #'http://[Base adress]/[controller]/[action]?[querystring]
     pattern = re.findall('\?([\w.-=_&]+)', url)
@@ -32,12 +33,12 @@ def getQueryParameters(url: str)-> list:
         (a,b) = re.findall(r'\b[\w.-]+[^{=}\W]\b', item, re.I)
         result.append((a,b))
     return result
-
+#-------------------------------------------------problem 3-------------------------------------------------------------
 def getSpecial(sentence:str, letter:str)-> list:
     pattern = re.findall(r'\b[{i}]\w*[^{i}\W]\b|\b[^{i}\W]\w*[{i}]\b'.format(i = letter), sentence, re.I)
 
     return pattern
-
+#-------------------------------------------------problem 4-------------------------------------------------------------
 def getRealMAC(sentence:str)-> str :
     #if not found, return None
     pattern = re.findall(r'\b[0-9a-fA-F:0-9a-fA-F]{17}|\b[0-9a-fA-F-0-9a-fA-F]{17}', sentence, re.I)
@@ -47,7 +48,7 @@ def getRealMAC(sentence:str)-> str :
     return pattern
 
 #PART 2
-#name, ID, phone, state
+#-------------------------------------------------problem 5-------------------------------------------------------------
 def getRejectedEntries()-> list:
     rejected = []
     DataFile = os.path.join(DataPath, 'Employees.txt')
@@ -71,6 +72,7 @@ def getRejectedEntries()-> list:
             rejected.append(name["first"]+ ' '+name["last"])
 
     return rejected
+#-------------------------------------------------problem 6-------------------------------------------------------------
 def getEmployeesWithIDs()-> dict:
     #key: employee name, value: ID
     resultDict = {}
@@ -88,7 +90,7 @@ def getEmployeesWithIDs()-> dict:
             resultDict[n] = str(UUID(id.group()))
 
     return resultDict
-
+#-------------------------------------------------problem 7-------------------------------------------------------------
 def getEmployeesWithoutIDs()-> list:
     result = []
     DataFile = os.path.join(DataPath, 'Employees.txt')
@@ -105,7 +107,7 @@ def getEmployeesWithoutIDs()-> list:
             result.append(n)
 
     return result
-
+#-------------------------------------------------problem 8-------------------------------------------------------------
 def getEmployeesWithPhones()-> dict:
     #key: employee name, value: phone number
     resultDict = {}
@@ -132,7 +134,7 @@ def getEmployeesWithPhones()-> dict:
                 resultDict[n] = nmbr
 
     return resultDict
-
+#-------------------------------------------------problem 9-------------------------------------------------------------
 def getEmployeesWithStates()-> dict:
     #key: employee name, value: state name
     resultDict = {}
@@ -156,7 +158,7 @@ def getEmployeesWithStates()-> dict:
             resultDict[n] = state
 
     return resultDict
-
+#-------------------------------------------------problem 10------------------------------------------------------------
 def getCompleteEntries()-> dict:
     #key: employee name,
     # value: tuple(ID, phone number, state of residence)
@@ -195,20 +197,6 @@ def getCompleteEntries()-> dict:
             complete[n] = element
 
     return complete
-
-
+#-----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    from pprint import pprint as pp
-    url = "http://www.purdue.edu/Home/Calendar?Year=2016&Month=September&Semester=Fall"
-    pp(getUrlParts(url))
-    url2 = "http://www.google.com/Math/Const?Pi=3.14&Max_Int=65536&What_Else=Not-Here"
-    pp(getQueryParameters(url2))
-    s = "The TART program runs on Tuesdays and Thursdays, but it doesn not start until next week"
-    pp(getSpecial(s,"t"))
-    pp(getRealMAC('hello 58:1C:0A:6E:39:4D eh kau pehal 3F:0B:55:A7:3E:99'))
-    pp(getRejectedEntries())
-    pp(getEmployeesWithIDs())
-    pp(getEmployeesWithoutIDs())
-    pp(getEmployeesWithPhones())
-    pp(getEmployeesWithStates())
-    pp(getCompleteEntries())
+    ...
