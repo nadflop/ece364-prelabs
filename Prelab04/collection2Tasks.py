@@ -175,3 +175,17 @@ def getUnusedStrains()-> set:
 #-----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     ...
+#deep copy
+#any changes made to the copied object doesn't reflect the original one
+#ChainMap = combine two dict together
+#new_child() - add new element in front
+#maps - display keys with coresponding val of all dict
+#python comprehension
+#a_list = [1,2,'a','4',0,4]
+#sq_int = [e**2 for e in a_list if type(e) == types.IntType]
+#e**2 <- output expression
+#for e in a_list <-iterator part
+#if type(e) == types.IntType <- optional predicate
+#filter() <- applies predicate to a seq
+#map() <- modifies each member of a seq
+#

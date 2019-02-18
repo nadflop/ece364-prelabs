@@ -399,7 +399,7 @@ def getCircuitByComponent(componentIDs: set)-> set:
             for element in circMap[k]:
                 if element == item:
                     circID.add(k)
-
+    #for k,v in circMap.items()
     return circID
 
 

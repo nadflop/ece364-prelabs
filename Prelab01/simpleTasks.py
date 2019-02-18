@@ -188,7 +188,7 @@ def convertToBoolean(num: int, size: int) -> str:
             booleanList.append('False')
             booleanList.reverse()
 
-    return(booleanList)
+    return booleanList
 #---------------------------problem 7----------------------------
 def convertToInteger(boolList: list) -> int:
     if len(boolList) == 0:

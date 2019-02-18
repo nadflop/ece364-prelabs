@@ -14,12 +14,13 @@ DataPath = os.path.expanduser("~ee364/DataFolder/Prelab02")
 def getMaxDifference(symbol: str) -> str:
     filename = symbol.__add__('.dat')
     DataText = os.path.join(DataPath, filename)
-    with open(DataText) as f:
+    with open(DataText, "r") as f:
         #raw = f.readline()#read and return line in files seperately
         rawData = f.readlines()
 
     maxDiff = 0
 
+    #rawData[2:]
     for i in range(2, len(rawData)):
         newData = str(rawData[i]).split(',')
         p = newData[5].split('\n')
@@ -35,17 +36,21 @@ def getMaxDifference(symbol: str) -> str:
 def getGainPercent(symbol: str):
     filename = symbol.__add__('.dat')
     DataText = os.path.join(DataPath, filename)
-    with open(DataText) as f:
-        rawData = f.readlines()  # read and return line in files seperately
+    try:
+        with open(DataText, "r") as f:
+            rawData = f.readlines()  # read and return line in files seperately
+    except:
+        raise ValueError("Symbol not found")
 
-    maxDiff = 0
+#    maxDiff = 0
     day = 0
 
+    #rawData[2:]
     for i in range(2, len(rawData)):
         newData = str(rawData[i]).split(',')
         diff = float(newData[1]) - float(newData[3])
         if round(diff, 4) > 0:
-            maxDiff = diff
+#            maxDiff = diff
             day = day + 1
 
     percent = round((day/(len(rawData) - 2)) * 100, 4)
@@ -122,7 +127,7 @@ def getCountOver(symbol: str, price: float):
         rawData = f.readlines()  # read and return line in files seperately
 
     days = 0
-    tmp = [ ]
+#    tmp = [ ]
 
     for i in range(2, len(rawData)):
         tmp = [ ]
@@ -142,4 +147,5 @@ def getCountOver(symbol: str, price: float):
 # This  block  is  optional
 if __name__  == "__main__":
 # Write  anything  here to test  your  code.
+    print(getGainPercent("asdf"))
     ...
