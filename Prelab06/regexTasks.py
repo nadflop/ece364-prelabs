@@ -11,7 +11,7 @@ from uuid import UUID
 # Module  level  Variables. (Write  this  statement  verbatim .)
 #######################################################
 DataPath = os.path.expanduser("~ee364/DataFolder/Prelab06")
-
+DataFile = os.path.join(DataPath, 'Employees.txt')
 #PART 1
 #-------------------------------------------------problem 1-------------------------------------------------------------
 def getUrlParts(url: str)-> tuple :
@@ -51,7 +51,6 @@ def getRealMAC(sentence:str)-> str :
 #-------------------------------------------------problem 5-------------------------------------------------------------
 def getRejectedEntries()-> list:
     rejected = []
-    DataFile = os.path.join(DataPath, 'Employees.txt')
     with open(DataFile, "r") as f:
         data = f.readlines()
 
@@ -77,7 +76,7 @@ def getRejectedEntries()-> list:
 def getEmployeesWithIDs()-> dict:
     #key: employee name, value: ID
     resultDict = {}
-    DataFile = os.path.join(DataPath, 'Employees.txt')
+
     with open(DataFile, "r") as f:
         data = f.readlines()
 
@@ -94,7 +93,6 @@ def getEmployeesWithIDs()-> dict:
 #-------------------------------------------------problem 7-------------------------------------------------------------
 def getEmployeesWithoutIDs()-> list:
     result = []
-    DataFile = os.path.join(DataPath, 'Employees.txt')
     with open(DataFile, "r") as f:
         data = f.readlines()
 
@@ -114,7 +112,6 @@ def getEmployeesWithoutIDs()-> list:
 def getEmployeesWithPhones()-> dict:
     #key: employee name, value: phone number
     resultDict = {}
-    DataFile = os.path.join(DataPath, 'Employees.txt')
     with open(DataFile, "r") as f:
         data = f.readlines()
 
@@ -141,7 +138,6 @@ def getEmployeesWithPhones()-> dict:
 def getEmployeesWithStates()-> dict:
     #key: employee name, value: state name
     resultDict = {}
-    DataFile = os.path.join(DataPath, 'Employees.txt')
     with open(DataFile, "r") as f:
         data = f.readlines()
 
@@ -166,7 +162,6 @@ def getCompleteEntries()-> dict:
     #key: employee name,
     # value: tuple(ID, phone number, state of residence)
     complete = {}
-    DataFile = os.path.join(DataPath, 'Employees.txt')
     with open(DataFile, "r") as f:
         data = f.readlines()
 
