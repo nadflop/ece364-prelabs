@@ -170,8 +170,7 @@ def getEmployeesWithStates()-> dict:
     return resultDict
 #-------------------------------------------------problem 10------------------------------------------------------------
 def getCompleteEntries()-> dict:
-    #key: employee name,
-    # value: tuple(ID, phone number, state of residence)
+    #key: employee name, value: tuple(ID, phone number, state of residence)
     complete = {}
     with open(DataFile, "r") as f:
         data = f.readlines()
