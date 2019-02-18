@@ -131,6 +131,7 @@ def getEmployeesWithPhones()-> dict:
         if name == None:
             name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
         no = re.search(r'\b[\d]{10}|\b[\d-]{12}|\([^()]+\)\s\d+-\d+', lines)
+
         if no != None:
             n = str(name["first"]+' '+name["last"])
             if len(no.group()) == 14:
