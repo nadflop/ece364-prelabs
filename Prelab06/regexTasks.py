@@ -101,8 +101,19 @@ def getEmployeesWithoutIDs()-> list:
         if name == None:
             name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
         id = re.search(r'\b[(0-9)(a-fA-F)]{8}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{12}|\b[(0-9)(a-fA-F)]{32}',lines,re.I)
-        if id == None:
+        no = re.findall(r'\b[\d]{10}|\b[\d-]{12}|\([^()]+\)\s\d+-\d+', lines)
+        state = re.findall(r'([(a-zA-Z)\s]+\Z)', lines)
+        if len(state) > 0:
+            temp = re.findall(r'[(a-zA-Z)\s]+', str(state), re.MULTILINE)  # seperate the \n
+            if len(temp) > 1:
+                state = [temp[0]]
+            else:
+                state = None
+        if id == None and state != None:
             n = str(name["first"]+' '+name["last"])
+            result.append(n)
+        elif id == None and len(no) != 0:
+            n = str(name["first"] + ' ' + name["last"])
             result.append(n)
 
     r = sorted(result,key=str)
