@@ -58,7 +58,7 @@ class Component:
         return hash(self.ID)
 
 #circuit class
-class Circuit(Component):
+class Circuit:
 
     def __init__(self, ID, components):
         self.ID = ID
@@ -77,13 +77,14 @@ class Circuit(Component):
     def _validateComponent(self, component):
         return isinstance(component,Component)
 
-    def __contains__(self, component):
-        if self._validateComponent(component) == False:
+    def __contains__(self, someComponent):
+        if self._validateComponent(someComponent) == False:
             raise TypeError("Component must be an instance of Component class")
-        return hasattr(self,component)
+        return hasattr(self,someComponent)
 
     def __add__(self, components):
-        self.addComponent(components)
+        if components not in self.components:
+            self.addComponent(components)
         return self
 
     def addComponent(self, someComponent):
@@ -91,11 +92,10 @@ class Circuit(Component):
             self.components.add(someComponent)
             newCost = round(self.cost + someComponent.price,2)
             self.cost = newCost
-        else:
-            return
 
     def __sub__(self, components):
-        self.subComponent(components)
+        if components in self.components:
+            self.subComponent(components)
         return self
 
     def subComponent(self, someComponent):
@@ -169,85 +169,63 @@ class Project:
     def _validateComponent(self, component):
         return isinstance(component,Component)
 
-    def __contains__(self, component):
-        if self._validateComponent(component) == False:
-            raise TypeError("Component must be an instance of Component class")
-        return hasattr(self,component)
+    def __contains__(self, something):
+        if (self._validateCircuit(something) and self._validateComponent(something) and self._validateParticipant(something)) == False:
+            raise ValueError("Item passed is neither a Student, Component or Circuit instance")
+        return hasattr(self,something)
 
-    def __add__(self, components):
-        self.addComponent(components)
+    def __add__(self, circuits):
+        if circuits not in self.circuits:
+            self.addCircuit(circuits)
         return self
 
-    def addComponent(self, someComponent):
-        if self._validateComponent(someComponent) == True:
-            self.components.add(someComponent)
-            newCost = round(self.cost + someComponent.price, 2)
+    def addCircuit(self, someCircuit):
+        if self._validateCircuit(someCircuit) == True:
+            self.circuits.append(someCircuit)
+            newCost = round(self.cost + someCircuit.cost, 2)
             self.cost = newCost
         else:
-            return
+            raise TypeError("Circuit must be an instance of Circuit class")
 
-    def __sub__(self, components):
-        self.subComponent(components)
+    def __sub__(self, circuits):
+        if circuits in self.circuits:
+            self.subCircuit(circuits)
         return self
 
-    def subComponent(self, someComponent):
-        if self._validateComponent(someComponent) == True:
-            self.components.remove(someComponent)
-            newCost = round(self.cost - someComponent.price, 2)
+    def subCircuit(self, someCircuit):
+        if self._validateComponent(someCircuit) == True:
+            self.circuits.remove(someCircuit)
+            newCost = round(self.cost - someCircuit.cost, 2)
             self.cost = newCost
         else:
-            raise TypeError("Component must be an instance of Component class")
-            return
+            raise TypeError("Circuit must be an instance of Circuit class")
+
+    def itemgetter(self):
+        def g(obj):
+            return obj[self]
+        return g
 
     def __str__(self):
-        return f"{self.ID}: ({format(len(RCount),'02d')} Circuits, {format(len(CCount),'02d')} Participants, " \
+        cost = format(self.cost, ".2f")
+        return f"{self.ID}: ({format(len(self.circuits),'02d')} Circuits, {format(len(self.participants),'02d')} Participants), " \
                f"Cost = ${cost}"
 
 #capstone class
-class Capstone:
-    def __init__(self, ID, ctype, price):
-        self.ID = ID
-        self._validateCtype(ctype)
-        self.price = format(price, ".2f")
+class Capstone(Project):
+    def __init__(self, *args):
+        if len(args) > 1:
+            ID = args[0]
+            participants = args[1]
+            circuits = args[2]
+            super().__init__(ID,participants,circuits,0)
+        else:
+            self = args
+        self._validateLevel(self.participants)
+    def _validateLevel(self,someParticipants):
+        for student in someParticipants:
+            if student.level is not Level.Senior.name:
+                raise ValueError("some participating students are not seniors")
 
-    def _validateCtype(self, ctype):
-        if ctype not in ComponentType.__members__.keys():
-            raise TypeError("The arguent must be an instance of the 'ComponentType' Enum")
-        self.ctype = ctype
-
-    def __str__(self):
-        return f"{self.ctype}, {self.ID}, ${self.price}"
-
-    def __hash__(self):
-        return hash(self.ID)
 #-----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    level1 = Level.Freshman
-    level2 = Level.Junior
-    student1 = Student('15487-79431', 'John', 'Smith', level1)
-    student2 = Student('69282-33425', 'Bailey', 'Catherine', level2)
-    print(student1)
-    print(student2)
-    c1 = ComponentType.Resistor
-    c2 = ComponentType.Capacitor
-    c3 = ComponentType.Inductor
-    c4 = ComponentType.Transistor
-    comp1 = Component('TAZ-349', c4, 1.10)
-    comp2 = Component('CUI-043', c2, 0.15)
-    comp3 = Component('QLS-943', c3, 0.36)
-    comp4 = Component('ORW-143', c1, 0.15)
-    comp5 = Component('TFL-784', c4, 1.55)
-    comp6 = Component('BTP-574', c4, 1.72)
-    comp7 = Component('CPF-254', c2, 1.01)
-    comp8 = Component('RCW-957', c1, 0.74)
-    comp9 = Component('NKT-617', c4, 2.29)
-    comp10 = Component('TDP-854', c4, 0.22)
-    #components = {comp1,comp2,comp3,comp4,comp5,comp6,comp7,comp8,comp9}
-    comp = {comp9,comp10}
-    circuit1 = Circuit('10-0-55', comp)
-    print(circuit1)
-    circuit1 += comp8
-    print(circuit1)
-    circuit2 = Circuit('11-0-88', {comp3,comp5,comp7,comp1})
-    print(circuit2)
-    proj1 = Project('38753067-e3a8-4c9e-bbde-cd13165fa21e',[student1,student2],[circuit1,circuit2],0)
+    ...
