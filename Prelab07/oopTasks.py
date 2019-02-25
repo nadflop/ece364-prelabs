@@ -9,19 +9,18 @@ import sys     # Each  one on a line
 from enum import Enum
 # Module  level  Variables. (Write  this  statement  verbatim .)
 #######################################################
-
 class Level(Enum):
     Freshman = 1
     Sophomore = 2
     Junior = 3
     Senior = 4
-
+#-----------------------------------------------------------------------------------------------------------------------
 class ComponentType(Enum):
     Resistor = 1
     Capacitor = 2
     Inductor = 3
     Transistor = 4
-
+#-----------------------------------------------------------------------------------------------------------------------
 #student class
 class Student:
     def __init__(self, ID, firstName, lastName, level):
@@ -37,7 +36,7 @@ class Student:
 
     def __str__(self):
         return f"{self.ID}, {self.firstName} {self.lastName}, {self.level}"
-
+#-----------------------------------------------------------------------------------------------------------------------
 #component class
 class Component:
     def __init__(self, ID, ctype, price):
@@ -56,7 +55,7 @@ class Component:
 
     def __hash__(self):
         return hash(self.ID)
-
+#-----------------------------------------------------------------------------------------------------------------------
 #circuit class
 class Circuit:
 
@@ -137,7 +136,7 @@ class Circuit:
             if items.ctype == compType.name:
                 element.add(items)
         return element
-
+#-----------------------------------------------------------------------------------------------------------------------
 #project class
 class Project:
     def __init__(self, ID, participants, circuits, cost):
@@ -209,7 +208,7 @@ class Project:
         cost = format(self.cost, ".2f")
         return f"{self.ID}: ({format(len(self.circuits),'02d')} Circuits, {format(len(self.participants),'02d')} Participants), " \
                f"Cost = ${cost}"
-
+#-----------------------------------------------------------------------------------------------------------------------
 #capstone class
 class Capstone(Project):
     def __init__(self, *args):
@@ -225,7 +224,6 @@ class Capstone(Project):
         for student in someParticipants:
             if student.level is not Level.Senior.name:
                 raise ValueError("some participating students are not seniors")
-
 #-----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     ...
