@@ -199,10 +199,13 @@ class Project:
         else:
             raise TypeError("Circuit must be an instance of Circuit class")
 
-    def itemgetter(self):
-        def g(obj):
-            return obj[self]
-        return g
+    def __getitem__(self, item):
+        try:
+            for element in self.circuits:
+                if item == element.ID:
+                    return element
+        except:
+            raise KeyError("Circuit ID doesn't exists in the project")
 
     def __str__(self):
         cost = format(self.cost, ".2f")
