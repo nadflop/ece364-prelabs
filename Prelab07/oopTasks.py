@@ -59,23 +59,28 @@ class Component:
 
 #circuit class
 class Circuit(Component):
+
     def __init__(self, ID, components):
         self.ID = ID
-        self.components = components
         if components == set():
             raise TypeError("Components must not be an empty set")
         price = 0
+        temp = set()
         for items in components:
             if self._validateComponent(items) == False:
                 raise TypeError("Set must be an instance of the Component class")
             price += items.price
             self.cost = price
-            #add the component set to components variables
-    def __len__(self):
-        return len(self.components)
+            temp.add(items)
+            self.components = temp
 
     def _validateComponent(self, component):
         return isinstance(component,Component)
+
+    def __contains__(self, component):
+        if self._validateComponent(component) == False:
+            raise TypeError("Component must be an instance of Component class")
+        return hasattr(self,component)
 
     def __add__(self, components):
         self.addComponent(components)
@@ -102,6 +107,15 @@ class Circuit(Component):
             raise TypeError("Component must be an instance of Component class")
             return
 
+    def __lt__(self, another_circuit):
+        return self.cost < another_circuit.cost
+
+    def __gt__(self, another_circuit):
+        return self.cost > another_circuit.cost
+
+    def __eq__(self, another_circuit):
+        return self.cost == another_circuit.cost
+
     def __str__(self):
         R = ComponentType.Resistor
         C = ComponentType.Capacitor
@@ -126,14 +140,64 @@ class Circuit(Component):
 
 #project class
 class Project:
-    def __init__(self, ID, participants, cost):
+    def __init__(self, ID, participants, circuits, cost):
         self.ID = ID
+        self.participants = []
+        self.circuits = []
+        if participants == []:
+            raise ValueError("Participants list must not be an empty set")
+        if circuits == []:
+            raise ValueError("Circuit List must not be empty")
+        for students in participants:
+            if self._validateParticipant(students) == False:
+                raise TypeError("Participant must be an instance of the Student class")
+            self.participants.append(students)
+        price = 0
+        for circ in circuits:
+            if self._validateCircuit(circ) == False:
+                raise TypeError("Circuit must be an instance of the Circuit class")
+            self.circuits.append(circ)
+            price += circ.cost
+        self.cost = price
 
+    def _validateParticipant(self, stud):
+        return isinstance(stud, Student)
 
-    def _validateCtype(self, ctype):
-        if ctype not in ComponentType.__members__.keys():
-            raise TypeError("The arguent must be an instance of the 'ComponentType' Enum")
-        self.ctype = ctype
+    def _validateCircuit(self, circ):
+        return isinstance(circ, Circuit)
+
+    def _validateComponent(self, component):
+        return isinstance(component,Component)
+
+    def __contains__(self, component):
+        if self._validateComponent(component) == False:
+            raise TypeError("Component must be an instance of Component class")
+        return hasattr(self,component)
+
+    def __add__(self, components):
+        self.addComponent(components)
+        return self
+
+    def addComponent(self, someComponent):
+        if self._validateComponent(someComponent) == True:
+            self.components.add(someComponent)
+            newCost = round(self.cost + someComponent.price, 2)
+            self.cost = newCost
+        else:
+            return
+
+    def __sub__(self, components):
+        self.subComponent(components)
+        return self
+
+    def subComponent(self, someComponent):
+        if self._validateComponent(someComponent) == True:
+            self.components.remove(someComponent)
+            newCost = round(self.cost - someComponent.price, 2)
+            self.cost = newCost
+        else:
+            raise TypeError("Component must be an instance of Component class")
+            return
 
     def __str__(self):
         return f"{self.ID}: ({format(len(RCount),'02d')} Circuits, {format(len(CCount),'02d')} Participants, " \
@@ -158,9 +222,12 @@ class Capstone:
         return hash(self.ID)
 #-----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    level = Level.Freshman
-    student = Student('15487-79431', 'John', 'Smith', level)
-    print(student)
+    level1 = Level.Freshman
+    level2 = Level.Junior
+    student1 = Student('15487-79431', 'John', 'Smith', level1)
+    student2 = Student('69282-33425', 'Bailey', 'Catherine', level2)
+    print(student1)
+    print(student2)
     c1 = ComponentType.Resistor
     c2 = ComponentType.Capacitor
     c3 = ComponentType.Inductor
@@ -177,5 +244,10 @@ if __name__ == "__main__":
     comp10 = Component('TDP-854', c4, 0.22)
     #components = {comp1,comp2,comp3,comp4,comp5,comp6,comp7,comp8,comp9}
     comp = {comp9,comp10}
-    circuit = Circuit('10-0-55', comp)
-    print(circuit)
+    circuit1 = Circuit('10-0-55', comp)
+    print(circuit1)
+    circuit1 += comp8
+    print(circuit1)
+    circuit2 = Circuit('11-0-88', {comp3,comp5,comp7,comp1})
+    print(circuit2)
+    proj1 = Project('38753067-e3a8-4c9e-bbde-cd13165fa21e',[student1,student2],[circuit1,circuit2],0)
