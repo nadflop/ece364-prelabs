@@ -9,7 +9,7 @@ import sys  # Each  one on a line
 from enum import Enum
 import copy
 import math
-from functools import total_ordering
+from collections import UserList
 # Module  level  Variables. (Write  this  statement  verbatim .)
 #######################################################
 
@@ -98,8 +98,7 @@ class Datum:
                 for i in range(0, index):
                     other._storage += (0.0,)
             temp = [a + b for a, b in zip(self._storage,other._storage)]
-            self._storage = tuple(temp)
-
+            self._storage = temp
         elif isinstance(other,float):
             for item in self._storage:
                 item += other
@@ -214,17 +213,150 @@ class Datum:
         distance2 = math.sqrt(sum([(a - b) ** 2 for a, b in zip(other._storage, temp2)]))
         return distance1 != distance2
 
-class Data:
-    pass
+class Data(UserList):
+
+    def __init__(self, initial = None):
+        if initial is not None:
+            for item in initial:
+                if isinstance(item,Datum) == False:
+                    raise TypeError("Argument must be type Datum")
+            super().__init__(initial)
+
+        if initial == None:
+            super().__init__([])
+
+    def computeBounds(self):
+        maxLen = 0
+        minCord = []
+        maxCord = []
+        for item in self.data:
+            maxLen = max(maxLen, len(item),key=int)
+
+        for item in self.data:
+            if len(item) < maxLen:
+                for i in range(0, 3 - len(item)):
+                    item._storage = item._storage + (0.0,)
+
+        for i in range(0, maxLen):
+            minCord.append(self.data[0][i])
+            maxCord.append(self.data[0][i])
+
+        for item in self.data:
+            for i in range(0, maxLen):
+                minCord[i] = min(minCord[i], item[i])
+                maxCord[i] = max(maxCord[i],item[i])
+
+        minDatum = Datum(*minCord)
+        maxDatum = Datum(*maxCord)
+
+        return  (minDatum,maxDatum)
+
+    def computeMean(self):
+        maxLen = 0
+        minCord = []
+        for item in self.data:
+            maxLen = max(maxLen, len(item),key=int)
+
+        for item in self.data:
+            if len(item) < maxLen:
+                for i in range(0, 3 - len(item)):
+                    item._storage = item._storage + (0.0,)
+
+        for i in range(0, maxLen):
+            minCord.append(0.0)
+
+        for item in self.data:
+            for i in range(0, maxLen):
+                minCord[i] += item[i]
+
+        for i in range(0,maxLen):
+            minCord[i] = minCord[i]/maxLen
+        return Datum(*minCord)
+
+    def append(self, item):
+        if isinstance(item,Datum) == False:
+            raise TypeError('argument must be type Datum')
+        return super().append(item)
+
+    def count(self, item):
+        if isinstance(item,Datum) == False:
+            raise TypeError('argument must be type Datum')
+        return super().count(item)
+
+    def index(self, item, *args):
+        if isinstance(item,Datum) == False:
+            raise TypeError('argument must be type Datum')
+        return super().index(item, *args)
+
+    def insert(self, i, item):
+        if isinstance(item,Datum) == False:
+            raise TypeError('argument must be type Datum')
+        return super().insert(i, item)
+
+    def remove(self, item):
+        if isinstance(item,Datum) == False:
+            raise TypeError('argument must be type Datum')
+        return super().remove(item)
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+
+    def extend(self, other):
+        if isinstance(other,Datum) == False:
+            raise TypeError('argument must be type Datum')
+        super().extend(other)
+
 
 class DataClass(Enum):
     Class1 = 1
     Class2 = 2
 
 class DataClassifier:
-    pass
+    _class1 = None
+    _class2 = None
 
+    def __init__(self, group1, group2):
+        if isinstance(group1,Data) == False:
+            raise TypeError("Group1 must be an instance of Data")
+        if isinstance(group2,Data) == False:
+            raise TypeError("Group2 must be an instance of Data")
+        if len(group1) == 0:
+            raise ValueError("Group1 must not be empty")
+        if len(group2) == 0:
+            raise ValueError("Group2 must not be empty")
 
+        self._class1 = group1
+        self._class2 = group2
+
+    def classify(self, otherDatum):
+        mean1 = self._class1.computeMean()
+        mean2 = self._class2.computeMean()
+        if len(otherDatum) < len(mean1):
+            for i in range(0, len(mean1) - len(otherDatum)):
+                otherDatum._storage += (0.0,)
+        elif len(otherDatum) > len(mean1):
+            temp = tuple(mean1)
+            for i in range(0, len(otherDatum) - len(mean1)):
+                temp += (0.0,)
+            mean1 = temp
+        distance1 = math.sqrt(sum([(a - b) ** 2 for a, b in zip(mean1, otherDatum)]))
+
+        if len(otherDatum) < len(mean2):
+            for i in range(0, len(mean2) - len(otherDatum)):
+                otherDatum._storage += (0.0,)
+        elif len(otherDatum) > len(mean2):
+            temp = tuple(mean2)
+            for i in range(0, len(otherDatum) - len(mean2)):
+                temp += (0.0,)
+            mean2 = temp
+        distance2 = math.sqrt(sum([(a - b) ** 2 for a, b in zip(mean2, otherDatum)]))
+
+        if distance1 < distance2:
+            return DataClass.Class1
+        elif distance1 > distance2:
+            return DataClass.Class2
+        else:
+            return DataClass.Class1
 
 # -----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
@@ -236,7 +368,18 @@ if __name__ == "__main__":
     print(test2)
     #print(test2.distanceFrom(test1))
     #print(33.1 in test)
-    test3 = test1 - test2
+    test3 = test1 + test2
     print(test3)
     print(test != test2)
     print(test3 * 3.9)
+    print(not None)
+    point1 = Datum(1.0,4.0,7.0)
+    point2 = Datum(6.0,3.0,4.0)
+    point3 = Datum(9.0, 0.0, 5.0)
+    hey = Data([point1,point2])
+    hey1 = Data([point1])
+    print(type(hey1))
+    print(hey.computeBounds())
+    print(hey.computeMean())
+    Test = DataClassifier(hey,hey1)
+    print(type(Test.classify(point3)))
