@@ -360,26 +360,4 @@ class DataClassifier:
 
 # -----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    test = Datum(3.14, -900.7511, 33.9)
-    print(test)
-    test1 = Datum(1.0,2.0)
-    print(test1)
-    test2 = Datum(-1.54,7.10,9.00,15.33)
-    print(test2)
-    #print(test2.distanceFrom(test1))
-    #print(33.1 in test)
-    test3 = test1 + test2
-    print(test3)
-    print(test != test2)
-    print(test3 * 3.9)
-    print(not None)
-    point1 = Datum(1.0,4.0,7.0)
-    point2 = Datum(6.0,3.0,4.0)
-    point3 = Datum(9.0, 0.0, 5.0)
-    hey = Data([point1,point2])
-    hey1 = Data([point1])
-    print(type(hey1))
-    print(hey.computeBounds())
-    print(hey.computeMean())
-    Test = DataClassifier(hey,hey1)
-    print(type(Test.classify(point3)))
+    ...
