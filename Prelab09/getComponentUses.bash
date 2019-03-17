@@ -6,17 +6,7 @@
 # Date:   3/16/2019
 ########################################################
 base=~ee364/DataFolder/Prelab09
-ProjPath=${base}/maps/projects.dat
 CircPath=${base}/circuits
-StudPath=${base}/maps/students.dat
 
-files=($(ls "$CircPath"))
-circ=()
-
-for i in "${files[@]}"
-do
-    circuit=$CircPath/$i
-    circ+=($(grep -l "$1" $circuit | cut -d'_' -f 2 | cut -d'.' -f 1))
-done
-
+circ=($(grep -l "$1" $CircPath/*.dat | cut -d'_' -f 2 | cut -d'.' -f 1))
 echo "${#circ[@]}"
