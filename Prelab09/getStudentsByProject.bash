@@ -22,4 +22,4 @@ do
     
 done
 
-IFS=$'\n' ; echo "${temp[*]}" | grep -h "${temp[*]}" $StudPath | cut -d"|" -f1
+IFS=$'\n' ; echo "${temp[*]}" | grep -h "${temp[*]}" $StudPath | cut -d"|" -f1 | sort -u
