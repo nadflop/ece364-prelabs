@@ -6,4 +6,6 @@
 # Date:   3/16/2019
 ########################################################
 
-DataPath=~ee364/DataFolder/Prelab09
+DataPath=~ee364/DataFolder/Prelab09/maps/projects.dat
+
+grep -h "$1" $DataPath | cut -d' ' -f 5 | sort -u
