@@ -26,11 +26,11 @@ def getUrlParts(url: str)-> tuple :
 #-------------------------------------------------problem 2-------------------------------------------------------------
 def getQueryParameters(url: str)-> list:
     #'http://[Base adress]/[controller]/[action]?[querystring]
-    pattern = re.findall('\?([\w.-=_&]+)', url)
+    pattern = re.findall('\?([\w.-=_&]+)', url) #just to get the query string
     result = []
-    temp = re.findall(r'\b[\w.-=_]+[^{&}\W]\b', str(pattern),re.I)
+    temp = re.findall(r'[\w.-=_]+[^{&}\W]', str(pattern),re.I) #splitting the query
     for item in temp:
-        (a,b) = re.findall(r'\b[\w.-]+[^{=}\W]\b', item, re.I)
+        (a,b) = re.findall(r'[\w.-]+[^{=}\W]', item, re.I)
         result.append((a,b))
     return result
 #-------------------------------------------------problem 3-------------------------------------------------------------
@@ -41,7 +41,7 @@ def getSpecial(sentence:str, letter:str)-> list:
 #-------------------------------------------------problem 4-------------------------------------------------------------
 def getRealMAC(sentence:str)-> str :
     #if not found, return None
-    pattern = re.findall(r'\b[0-9a-fA-F:0-9a-fA-F]{17}|\b[0-9a-fA-F-0-9a-fA-F]{17}', sentence, re.I)
+    pattern = re.findall(r'[0-9a-fA-F:0-9a-fA-F]{17}|[0-9a-fA-F-0-9a-fA-F]{17}', sentence, re.I)
     if len(pattern) == 0:
         return None
 
@@ -58,8 +58,8 @@ def getRejectedEntries()-> list:
         name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
         if name == None:
             name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
-        id = re.findall(r'\b[(0-9)(a-fA-F)]{8}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{12}|\b[(0-9)(a-fA-F)]{32}',lines,re.I)
-        no = re.findall(r'\b[\d]{10}|\b[\d-]{12}|\([^()]+\)\s\d+-\d+', lines)
+        id = re.findall(r'[(0-9)(a-fA-F)]{8}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{12}|[(0-9)(a-fA-F)]{32}',lines,re.I)
+        no = re.search(r'\b[\d]{10}|\b\d[\d-]{11}|\([^()]+\)\s\d+-\d+', lines)
         state = re.findall(r'([(a-zA-Z)\s]+\Z)',lines)
         if len(state) > 0:
             temp = re.findall(r'[(a-zA-Z)\s]+',str(state),re.MULTILINE)#seperate the \n
@@ -84,7 +84,7 @@ def getEmployeesWithIDs()-> dict:
         name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
         if name == None:
             name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
-        id = re.search(r'\b[(0-9)(a-fA-F)]{8}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{12}|\b[(0-9)(a-fA-F)]{32}',lines,re.I)
+        id = re.search(r'[(0-9)(a-fA-F)]{8}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{12}|[(0-9)(a-fA-F)]{32}',lines,re.I)
         if id != None:
             n = str(name["first"]+' '+name["last"])
             resultDict[n] = str(UUID(id.group()))
@@ -100,8 +100,8 @@ def getEmployeesWithoutIDs()-> list:
         name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
         if name == None:
             name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
-        id = re.search(r'\b[(0-9)(a-fA-F)]{8}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{12}|\b[(0-9)(a-fA-F)]{32}',lines,re.I)
-        no = re.findall(r'\b[\d]{10}|\b[\d-]{12}|\([^()]+\)\s\d+-\d+', lines)
+        id = re.search(r'[(0-9)(a-fA-F)]{8}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{4}-[(0-9)(a-fA-F)]{12}|[(0-9)(a-fA-F)]{32}',lines,re.I)
+        no = re.search(r'\b[\d]{10}|\b\d[\d-]{11}|\([^()]+\)\s\d+-\d+', lines)
         state = re.findall(r'([(a-zA-Z)\s]+\Z)', lines)
         if len(state) > 0:
             temp = re.findall(r'[(a-zA-Z)\s]+', str(state), re.MULTILINE)  # seperate the \n
@@ -130,8 +130,7 @@ def getEmployeesWithPhones()-> dict:
         name = re.search(r'(?P<last>[a-zA-Z]+),\s(?P<first>[a-zA-Z]+)', lines)
         if name == None:
             name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
-        no = re.search(r'\b[\d]{10}|\b[\d-]{12}|\([^()]+\)\s\d+-\d+', lines)
-
+        no = re.search(r'\b[\d]{10}|\b\d[\d-]{11}|\([^()]+\)\s\d+-\d+', lines)
         if no != None:
             n = str(name["first"]+' '+name["last"])
             if len(no.group()) == 14:
@@ -181,7 +180,7 @@ def getCompleteEntries()-> dict:
         if name == None:
             name = re.search(r'(?P<first>[a-zA-Z]+)\s(?P<last>[a-zA-Z]+),', lines)
         id = re.search(r'\b[(0-9)(a-fA-F)]{8}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{4}-\b[(0-9)(a-fA-F)]{12}|\b[(0-9)(a-fA-F)]{32}',lines,re.I)
-        no = re.search(r'\b[\d]{10}|\b[\d-]{12}|\([^()]+\)\s\d+-\d+', lines)
+        no = re.search(r'\b[\d]{10}|\b\d[\d-]{11}|\([^()]+\)\s\d+-\d+', lines)
         state = re.search(r'([(a-zA-Z)\s]+\Z)', lines)
         if state != None:
             temp = re.search(r'[(a-zA-Z)\s][^\n]+', str(state.group()), re.MULTILINE)  # seperate the \n
@@ -208,4 +207,8 @@ def getCompleteEntries()-> dict:
     return complete
 #-----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    ...
+    from pprint import pprint as pp
+    pp(getUrlParts('http://www.purdue.edu/Home/Calendar?Year=2016&Month=September&Semester=Fall'))
+    pp(getQueryParameters('http://www.google.com/Math/Const?Pi=3.14&Max_Int=65536&What_else=Not-Here'))
+    pp(getRealMAC('58:1C:0A:6E:39:4D hello58-1C-0A-6E-39-4D....58-1W-0A-6E-39-4R'))
+    pp(getEmployeesWithPhones())
