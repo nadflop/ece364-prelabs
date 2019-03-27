@@ -5,10 +5,10 @@
 # ID:     ee364g02
 # Date:   3/16/2019
 ########################################################
-base=~ee364/DataFolder/Prelab09
-ProjPath=${base}/maps/projects.dat
-CircPath=${base}/circuits
-StudPath=${base}/maps/students.dat
+DataPath=~ee364/DataFolder/Prelab09
+ProjPath=${DataPath}/maps/projects.dat
+CircPath=${DataPath}/circuits
+StudPath=${DataPath}/maps/students.dat
 
 result=($(grep -h "$1" $ProjPath | cut -d' ' -f 5 | sort -u))
 length=${#result[@]}
