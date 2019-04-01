@@ -117,21 +117,44 @@ class Consumer(QMainWindow, Ui_MainWindow):
         print(data)
         name = re.search(r'>(.)+<',str(data[2]))
         name = re.search(r'([^><])+', name.group()) #remove the '><
-
+        self.txtStudentName.setText(name.group())
+        
         grad = re.search(r'false|true', str(data[2]))
+        if grad.group() == 'true':
+            self.chkGraduate.setChecked(True)
+        else:
+            self.chkGraduate.setChecked(False)
+
         ID = re.search(r'>(.)+<', str(data[3]))
         ID = re.search(r'[^><]+', ID.group())
         #ID = re.search(r'([^</StudentID>]\w+)',str(data[3]))
+        self.txtStudentID.setText(ID.group())
 
         college = re.search(r'>([a-zA-Z\s])+<', str(data[4]))
         college = re.search(r'[a-zA-Z\s]+', college.group())  # remove the '><
         #college = re.search(r'([^</College>]\w+)',str(data[4]))
+        index = self.cboCollege.findText(college.group())
+        self.cboCollege.setCurrentIndex(index)
 
-        compID = re.findall(r'"(\w)+"', str(data[6:]))
-        print(compID)
+        compID = []
+        compCount = []
+        for item in data[6:-2]:
+            temp = re.search(r'"(.)+"', str(item))
+            temp = str(temp.group()).split()
+            compID.append(temp[0].replace('"',''))
+            count = re.search(r'=(.)+', temp[1].replace('"',''))
+            count = re.search('[^=]+', count.group())
+            compCount.append(count.group())
 
-        compCount = re.findall(r'"(\w)+"', str(data[6:]))
-        print(compCount)
+        if len(compID) > 20:
+            for i in range(20):
+                self.componentName[i].setText(compID[i])
+                self.componentCount[i].setText(compCount[i])
+        else:
+            for i in range(len(compID)):
+                self.componentName[i].setText(compID[i])
+                self.componentCount[i].setText(compCount[i])
+
 
         self.btnLoad.setEnabled(False)
         self.btnSave.setEnabled(True)
