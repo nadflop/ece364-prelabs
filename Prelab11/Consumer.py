@@ -114,7 +114,6 @@ class Consumer(QMainWindow, Ui_MainWindow):
         with open(filePath, "r") as f:
             data = [line for line in f.read().splitlines()]
 
-        print(data)
         name = re.search(r'>(.)+<',str(data[2]))
         name = re.search(r'([^><])+', name.group()) #remove the '><
         self.txtStudentName.setText(name.group())
